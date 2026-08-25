@@ -83,35 +83,13 @@ interface TaskListProps {
   };
 }
 
-function TaskList({ addDangerToast, addSuccessToast, user }: TaskListProps) {
+function TaskListContent({
+  addDangerToast,
+  addSuccessToast,
+  user,
+}: TaskListProps) {
   const theme = useTheme();
   const locale = useSelector((state: RootState) => state.common?.locale);
-
-  // Check if GTF feature flag is enabled
-  if (!isFeatureEnabled(FeatureFlag.GlobalTaskFramework)) {
-    return (
-      <>
-        <SubMenu name={t('Tasks')} />
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: '50vh',
-            color: theme.colorTextSecondary,
-          }}
-        >
-          <h3>{t('Feature Not Enabled')}</h3>
-          <p>
-            {t(
-              'The Global Task Framework is not enabled. Please contact your administrator to enable the GLOBAL_TASK_FRAMEWORK feature flag.',
-            )}
-          </p>
-        </div>
-      </>
-    );
-  }
 
   const {
     state: { loading, resourceCount: tasksCount, resourceCollection: tasks },
@@ -655,6 +633,44 @@ function TaskList({ addDangerToast, addSuccessToast, user }: TaskListProps) {
         )}
       </Modal>
     </>
+  );
+}
+
+function TaskList({ addDangerToast, addSuccessToast, user }: TaskListProps) {
+  const theme = useTheme();
+
+  // Check if GTF feature flag is enabled
+  if (!isFeatureEnabled(FeatureFlag.GlobalTaskFramework)) {
+    return (
+      <>
+        <SubMenu name={t('Tasks')} />
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '50vh',
+            color: theme.colorTextSecondary,
+          }}
+        >
+          <h3>{t('Feature Not Enabled')}</h3>
+          <p>
+            {t(
+              'The Global Task Framework is not enabled. Please contact your administrator to enable the GLOBAL_TASK_FRAMEWORK feature flag.',
+            )}
+          </p>
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <TaskListContent
+      addDangerToast={addDangerToast}
+      addSuccessToast={addSuccessToast}
+      user={user}
+    />
   );
 }
 

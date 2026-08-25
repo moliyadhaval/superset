@@ -33,7 +33,11 @@ export const advancedAnalyticsControls: ControlPanelSectionConfig = {
   ),
   visibility: displayTimeRelatedControls,
   controlSetRows: [
-    [<ControlSubSectionHeader>{t('Rolling window')}</ControlSubSectionHeader>],
+    [
+      <ControlSubSectionHeader key="rolling-window-header">
+        {t('Rolling window')}
+      </ControlSubSectionHeader>,
+    ],
     [
       {
         name: 'rolling_type',
@@ -102,7 +106,11 @@ export const advancedAnalyticsControls: ControlPanelSectionConfig = {
         },
       },
     ],
-    [<ControlSubSectionHeader>{t('Time comparison')}</ControlSubSectionHeader>],
+    [
+      <ControlSubSectionHeader key="time-comparison-header">
+        {t('Time comparison')}
+      </ControlSubSectionHeader>,
+    ],
     [
       {
         name: 'time_compare',
@@ -173,7 +181,11 @@ export const advancedAnalyticsControls: ControlPanelSectionConfig = {
         },
       },
     ],
-    [<ControlSubSectionHeader>{t('Resample')}</ControlSubSectionHeader>],
+    [
+      <ControlSubSectionHeader key="resample-header">
+        {t('Resample')}
+      </ControlSubSectionHeader>,
+    ],
     [
       {
         name: 'resample_rule',

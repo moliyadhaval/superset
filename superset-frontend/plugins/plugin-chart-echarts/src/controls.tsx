@@ -121,7 +121,11 @@ export const legendSortControl: ControlSetItem = {
 };
 
 export const legendSection: ControlSetRow[] = [
-  [<ControlSubSectionHeader>{t('Legend')}</ControlSubSectionHeader>],
+  [
+    <ControlSubSectionHeader key="legend-header">
+      {t('Legend')}
+    </ControlSubSectionHeader>,
+  ],
   [showLegendControl],
   [legendTypeControl],
   [legendOrientationControl],
@@ -337,7 +341,11 @@ const tooltipTruncationControl: ControlSetItem = {
 };
 
 export const richTooltipSection: ControlSetRow[] = [
-  [<ControlSubSectionHeader>{t('Tooltip')}</ControlSubSectionHeader>],
+  [
+    <ControlSubSectionHeader key="tooltip-header">
+      {t('Tooltip')}
+    </ControlSubSectionHeader>,
+  ],
   [richTooltipControl],
   [tooltipTotalControl],
   [tooltipPercentageControl],
@@ -423,7 +431,11 @@ export const forceMaxInterval = {
 };
 
 export const seriesOrderSection: ControlSetRow[] = [
-  [<ControlSubSectionHeader>{t('Series Order')}</ControlSubSectionHeader>],
+  [
+    <ControlSubSectionHeader key="series-order-header">
+      {t('Series Order')}
+    </ControlSubSectionHeader>,
+  ],
   [sortSeriesType],
   [sortSeriesAscending],
 ];

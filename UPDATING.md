@@ -26,6 +26,20 @@ assists people when migrating to a new version.
 
 - `SAMPLES_ROW_LIMIT` is now the default for `/datasource/samples` requests without a valid explicit `per_page`, rather than a hard per-request ceiling; explicit limits are honored up to the existing global row-limit ceiling, matching `/chart/data` SAMPLES requests.
 
+### `SupersetMetastoreCache` defaults to the JSON codec
+
+`SupersetMetastoreCache` now defaults to `JsonKeyValueCodec` when a cache config
+does not set `CODEC`, matching the extension storage registry's `json` default;
+previously it defaulted to `PickleKeyValueCodec` and logged a warning about it.
+Decoding a pickle stream can execute arbitrary code, so pickle is now an explicit
+opt-in. All shipped cache configs (`FILTER_STATE_CACHE_CONFIG`,
+`EXPLORE_FORM_DATA_CACHE_CONFIG`, `EXTENSIONS_EPHEMERAL_STORAGE`) already set
+`JsonKeyValueCodec` and are unaffected. Deployments that point another
+`CACHE_TYPE: SupersetMetastoreCache` config at the metastore and store values
+that are not JSON-serializable must set `"CODEC": PickleKeyValueCodec()`
+explicitly; entries written by the previous default cannot be read by the JSON
+codec, so such caches should be treated as cold after the upgrade.
+
 ### MCP tool results preserve stored string values
 
 Structured MCP tool results no longer add `<UNTRUSTED-CONTENT>` wrappers or

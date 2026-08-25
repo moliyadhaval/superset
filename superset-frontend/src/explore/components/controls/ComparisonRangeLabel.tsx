@@ -182,17 +182,15 @@ export const ComparisonRangeLabel = ({
     <>
       <ControlHeader label={t('Actual range for comparison')} />
       {labels.flat().map(label => (
-        <>
-          <div
-            css={theme => css`
-              font-size: ${theme.fontSize}px;
-              color: ${theme.colorText};
-            `}
-            key={label}
-          >
-            {label}
-          </div>
-        </>
+        <div
+          css={theme => css`
+            font-size: ${theme.fontSize}px;
+            color: ${theme.colorText};
+          `}
+          key={label}
+        >
+          {label}
+        </div>
       ))}
     </>
   ) : null;

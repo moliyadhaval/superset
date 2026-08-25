@@ -108,9 +108,9 @@ const horizontalAlign: ControlFormItemSpec<'RadioButtonControl'> & {
   debounceDelay: 50,
   defaultValue: 'left',
   options: [
-    ['left', <Icons.AlignLeftOutlined iconSize="m" />],
-    ['center', <Icons.AlignCenterOutlined iconSize="m" />],
-    ['right', <Icons.AlignRightOutlined iconSize="m" />],
+    ['left', <Icons.AlignLeftOutlined key="left" iconSize="m" />],
+    ['center', <Icons.AlignCenterOutlined key="center" iconSize="m" />],
+    ['right', <Icons.AlignRightOutlined key="right" iconSize="m" />],
   ],
 };
 

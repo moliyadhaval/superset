@@ -104,19 +104,28 @@ jobs:
             console.log(`✅ Authorized maintainer: ${actor}`);
             core.setOutput('authorized', 'true');
 
+      # The install set is resolved from the base ref (never the PR) and every
+      # distribution is hash-verified: the package is executed by steps holding
+      # the AWS, DockerHub and GitHub credentials below. This step itself runs
+      # without any secret in its environment.
+      - name: Checkout base Showtime requirements
+        if: steps.auth.outputs.authorized == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: base
+          sparse-checkout: .github/workflows/showtime-requirements.txt
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
       - name: Install Superset Showtime
         if: steps.auth.outputs.authorized == 'true'
         run: |
           echo "::notice::Maintainer $GITHUB_ACTOR triggered deploy for PR ${PULL_REQUEST_NUMBER}"
-          pip install "superset-showtime==${SHOWTIME_VERSION}"
+          pip install --require-hashes -r base/.github/workflows/showtime-requirements.txt
           showtime version
 
         env:
           PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number || github.event.inputs.pr_number }}
-          # Pinned exactly: this package is executed by steps holding the AWS,
-          # DockerHub and GitHub credentials below, so a floating install would
-          # hand those secrets to any compromised release.
-          SHOWTIME_VERSION: "0.7.1"
       - name: Check what actions are needed
         if: steps.auth.outputs.authorized == 'true'
         id: check

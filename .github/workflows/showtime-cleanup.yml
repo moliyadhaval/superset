@@ -8,11 +8,9 @@ on:
   # Manual trigger for testing
   workflow_dispatch:
 
-# Common environment variables
+# Common environment variables (non-sensitive only; secrets are scoped to the
+# single step that needs them)
 env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: ${{ vars.AWS_REGION || 'us-west-2' }}
   GITHUB_ORG: ${{ github.repository_owner }}
   GITHUB_REPO: ${{ github.event.repository.name }}
@@ -31,15 +29,23 @@ jobs:
       pull-requests: write
 
     steps:
+      - name: Checkout Showtime requirements
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: .github/workflows/showtime-requirements.txt
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
+      # Hash-verified install, run before any secret enters the environment:
+      # the package is executed below with AWS and GitHub credentials.
       - name: Install Superset Showtime
-        run: pip install "superset-showtime==${SHOWTIME_VERSION}"
-        env:
-          # Pinned exactly: this package runs with the AWS and GitHub
-          # credentials above, so a floating install would hand those secrets
-          # to any compromised release.
-          SHOWTIME_VERSION: "0.7.1"
+        run: pip install --require-hashes -r .github/workflows/showtime-requirements.txt
 
       - name: Cleanup expired environments and orphaned labels
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           echo "Cleaning up environments respecting TTL labels, and pruning orphaned 🎪 labels"
           python -m showtime cleanup --respect-ttl --force

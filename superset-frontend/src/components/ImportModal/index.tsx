@@ -16,7 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import { FunctionComponent, useEffect, useState, ChangeEvent } from 'react';
+import {
+  Fragment,
+  FunctionComponent,
+  useEffect,
+  useState,
+  ChangeEvent,
+} from 'react';
 import { t } from '@apache-superset/core/translation';
 import { styled, css } from '@apache-superset/core/theme';
 import { useImportResource } from 'src/views/CRUD/hooks';
@@ -253,7 +259,7 @@ export const ImportModal: FunctionComponent<ImportModelsModalProps> = ({
         <h5>{t('Database passwords')}</h5>
         <HelperMessage>{passwordsNeededMessage}</HelperMessage>
         {files.map(fileName => (
-          <>
+          <Fragment key={fileName}>
             {passwordFields?.indexOf(fileName) >= 0 && (
               <StyledContainer key={`password-for-${fileName}`}>
                 <div className="control-label">
@@ -338,7 +344,7 @@ export const ImportModal: FunctionComponent<ImportModelsModalProps> = ({
                 />
               </StyledContainer>
             )}
-          </>
+          </Fragment>
         ))}
         {encryptedExtraFields.map(({ fileName, fields }) => (
           <StyledContainer key={`encrypted-extra-for-${fileName}`}>

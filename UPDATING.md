@@ -26,6 +26,32 @@ assists people when migrating to a new version.
 
 - `SAMPLES_ROW_LIMIT` is now the default for `/datasource/samples` requests without a valid explicit `per_page`, rather than a hard per-request ceiling; explicit limits are honored up to the existing global row-limit ceiling, matching `/chart/data` SAMPLES requests.
 
+### `SupersetMetastoreCache` defaults to the JSON codec
+
+`SupersetMetastoreCache` serializes entries with `JsonKeyValueCodec` when a cache
+config does not set `CODEC`, instead of `PickleKeyValueCodec`. The built-in
+`FILTER_STATE_CACHE_CONFIG`, `EXPLORE_FORM_DATA_CACHE_CONFIG` and
+`EXTENSIONS_EPHEMERAL_STORAGE` configs already select a codec explicitly and are
+unaffected.
+
+Deployments that point another cache (for example `DATA_CACHE_CONFIG`,
+`THUMBNAIL_CACHE_CONFIG` or `CACHE_CONFIG`) at `SupersetMetastoreCache` and store
+values that are not JSON-serializable — chart data payloads, screenshots, tuples,
+arbitrary Python objects — must opt back in explicitly:
+
+```python
+from superset.key_value.types import PickleKeyValueCodec
+
+DATA_CACHE_CONFIG = {
+    "CACHE_TYPE": "SupersetMetastoreCache",
+    "CODEC": PickleKeyValueCodec(),
+}
+```
+
+Entries written with the previous default cannot be read by the JSON codec, so
+existing `key_value` rows for those caches should be treated as cold after the
+upgrade.
+
 ### MCP tool results preserve stored string values
 
 Structured MCP tool results no longer add `<UNTRUSTED-CONTENT>` wrappers or

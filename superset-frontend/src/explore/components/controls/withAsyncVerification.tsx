@@ -25,7 +25,7 @@ import { t } from '@apache-superset/core/translation';
 import { JsonArray, JsonValue } from '@superset-ui/core';
 import { ControlProps } from 'src/explore/components/Control';
 import builtInControlComponents from 'src/explore/components/controls';
-import useEffectEvent from 'src/hooks/useEffectEvent';
+import useEventCallback from 'src/hooks/useEventCallback';
 
 /**
  * Full control component map.
@@ -167,7 +167,7 @@ export default function withAsyncVerification({
       [basicOnChange, otherProps, verifiedProps],
     );
 
-    const verifyProps = useEffectEvent(
+    const verifyProps = useEventCallback(
       (verifyFunc: AsyncVerify, props: typeof otherProps) => {
         if (showLoadingState) {
           setIsLoading(true);

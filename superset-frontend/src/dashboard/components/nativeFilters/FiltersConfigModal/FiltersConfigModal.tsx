@@ -24,7 +24,7 @@ import { styled, css, useTheme } from '@apache-superset/core/theme';
 import { Constants, Form, Icons, Flex } from '@superset-ui/core/components';
 import { ErrorBoundary } from 'src/components';
 import { testWithId } from 'src/utils/testUtils';
-import useEffectEvent from 'src/hooks/useEffectEvent';
+import useEventCallback from 'src/hooks/useEventCallback';
 import {
   BaseModalWrapper,
   BaseModalBody,
@@ -443,7 +443,7 @@ function FiltersConfigModal({
     onCancel();
   }, [resetForm, onCancel]);
 
-  const toggleExpand = useEffectEvent(() => {
+  const toggleExpand = useEventCallback(() => {
     setExpanded(!expanded);
   });
 

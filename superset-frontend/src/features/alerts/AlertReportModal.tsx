@@ -2734,11 +2734,12 @@ const AlertReportModal: FunctionComponent<AlertReportModalProps> = ({
               children: (
                 <>
                   {notificationSettings.map((notificationSetting, i) => (
-                    <StyledNotificationMethodWrapper>
+                    <StyledNotificationMethodWrapper
+                      key={`NotificationMethod-${i}`}
+                    >
                       <NotificationMethod
                         setting={notificationSetting}
                         index={i}
-                        key={`NotificationMethod-${i}`}
                         onUpdate={updateNotificationSetting}
                         onRemove={removeNotificationSetting}
                         onInputChange={onInputChange}

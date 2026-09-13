@@ -450,8 +450,10 @@ itsdangerous==2.2.0
     #   flask-wtf
 jaraco-classes==3.4.0
     # via keyring
-jaraco-context==6.0.1
-    # via keyring
+jaraco-context==6.1.2
+    # via
+    #   -r requirements/development.in
+    #   keyring
 jaraco-functools==4.3.0
     # via keyring
 jeepney==0.9.0
@@ -547,8 +549,10 @@ matplotlib==3.9.0
     # via prophet
 mccabe==0.7.0
     # via pylint
-mcp==1.24.0
-    # via fastmcp-slim
+mcp==1.29.1
+    # via
+    #   apache-superset
+    #   fastmcp-slim
 mdurl==0.1.2
     # via
     #   -c requirements/base-constraint.txt
@@ -662,7 +666,7 @@ pillow==12.3.0
     #   -c requirements/base-constraint.txt
     #   apache-superset
     #   matplotlib
-pip==25.1.1
+pip==26.2.1
     # via apache-superset
 platformdirs==4.3.8
     # via
@@ -760,6 +764,7 @@ pygeohash==3.2.2
 pygments==2.20.0
     # via
     #   -c requirements/base-constraint.txt
+    #   pytest
     #   rich
 pyhive==0.7.0
     # via apache-superset
@@ -790,14 +795,14 @@ pyparsing==3.3.2
     #   matplotlib
 pyperclip==1.10.0
     # via fastmcp-slim
-pytest==7.4.4
+pytest==9.1.1
     # via
     #   apache-superset
     #   apache-superset-extensions-cli
     #   pytest-asyncio
     #   pytest-cov
     #   pytest-mock
-pytest-asyncio==0.23.8
+pytest-asyncio==1.4.0
     # via apache-superset
 pytest-cov==6.0.0
     # via
@@ -835,7 +840,7 @@ python-dotenv==1.2.2
     #   pydantic-settings
 python-ldap==3.4.7
     # via apache-superset
-python-multipart==0.0.29
+python-multipart==0.0.32
     # via
     #   fastmcp-slim
     #   mcp
@@ -1029,6 +1034,7 @@ typing-extensions==4.16.0
     #   pydantic
     #   pydantic-core
     #   pyopenssl
+    #   pytest-asyncio
     #   referencing
     #   shillelagh
     #   sqlalchemy

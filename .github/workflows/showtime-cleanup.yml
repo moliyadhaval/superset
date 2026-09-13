@@ -32,7 +32,12 @@ jobs:
 
     steps:
       - name: Install Superset Showtime
-        run: pip install superset-showtime
+        run: pip install "superset-showtime==${SHOWTIME_VERSION}"
+        env:
+          # Pinned exactly: this package runs with the AWS and GitHub
+          # credentials above, so a floating install would hand those secrets
+          # to any compromised release.
+          SHOWTIME_VERSION: "0.7.1"
 
       - name: Cleanup expired environments and orphaned labels
         run: |

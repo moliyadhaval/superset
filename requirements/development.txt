@@ -179,7 +179,7 @@ croniter==6.2.4
     # via
     #   -c requirements/base-constraint.txt
     #   apache-superset
-cryptography==50.0.0
+cryptography==50.0.1
     # via
     #   -c requirements/base-constraint.txt
     #   apache-superset
@@ -637,7 +637,7 @@ pandas==2.3.3
     #   db-dtypes
     #   pandas-gbq
     #   prophet
-pandas-gbq==0.35.1
+pandas-gbq==0.35.2
     # via apache-superset
 parameterized==0.9.0
     # via apache-superset
@@ -729,7 +729,7 @@ pycparser==2.22
     # via
     #   -c requirements/base-constraint.txt
     #   cffi
-pydantic==2.14.0b1
+pydantic==2.13.5
     # via
     #   -c requirements/base-constraint.txt
     #   apache-superset
@@ -738,7 +738,7 @@ pydantic==2.14.0b1
     #   mcp
     #   openapi-pydantic
     #   pydantic-settings
-pydantic-core==2.48.0
+pydantic-core==2.46.5
     # via
     #   -c requirements/base-constraint.txt
     #   pydantic
@@ -746,7 +746,7 @@ pydantic-settings==2.15.0
     # via
     #   fastmcp-slim
     #   mcp
-pydata-google-auth==1.9.0
+pydata-google-auth==1.9.1
     # via pandas-gbq
 pydruid==0.6.9
     # via apache-superset

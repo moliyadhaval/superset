@@ -99,7 +99,7 @@ cachelib==0.13.0
     #   -c requirements/base-constraint.txt
     #   flask-caching
     #   flask-session
-cachetools==7.1.7
+cachetools==7.1.8
     # via
     #   -c requirements/base-constraint.txt
     #   apache-superset
@@ -384,7 +384,7 @@ greenlet==3.5.4
     #   sqlalchemy
 griffelib==2.0.2
     # via fastmcp-slim
-grpcio==1.83.0
+grpcio==1.83.1
     # via
     #   apache-superset
     #   google-api-core
@@ -557,7 +557,7 @@ more-itertools==10.8.0
     # via
     #   jaraco-classes
     #   jaraco-functools
-msgpack==1.2.1
+msgpack==1.2.2
     # via
     #   -c requirements/base-constraint.txt
     #   apache-superset
@@ -730,7 +730,7 @@ pycparser==2.22
     # via
     #   -c requirements/base-constraint.txt
     #   cffi
-pydantic==2.13.4
+pydantic==2.13.5
     # via
     #   -c requirements/base-constraint.txt
     #   apache-superset
@@ -739,7 +739,7 @@ pydantic==2.13.4
     #   mcp
     #   openapi-pydantic
     #   pydantic-settings
-pydantic-core==2.46.4
+pydantic-core==2.46.5
     # via
     #   -c requirements/base-constraint.txt
     #   pydantic
@@ -931,7 +931,7 @@ shillelagh==1.4.5
     # via
     #   -c requirements/base-constraint.txt
     #   apache-superset
-simplejson==4.1.1
+simplejson==4.1.2
     # via
     #   -c requirements/base-constraint.txt
     #   apache-superset

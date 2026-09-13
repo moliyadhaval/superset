@@ -24,8 +24,12 @@ from flask_caching import BaseCache
 from sqlalchemy.exc import SQLAlchemyError
 
 from superset import db
-from superset.key_value.exceptions import KeyValueCreateFailedError
+from superset.key_value.exceptions import (
+    KeyValueCodecDecodeException,
+    KeyValueCreateFailedError,
+)
 from superset.key_value.types import (
+    JsonKeyValueCodec,
     KeyValueCodec,
     KeyValueResource,
     PickleKeyValueCodec,
@@ -55,7 +59,7 @@ class SupersetMetastoreCache(BaseCache):
     ) -> BaseCache:
         seed = config.get("CACHE_KEY_PREFIX", "")
         kwargs["namespace"] = get_uuid_namespace(seed, app)
-        codec = config.get("CODEC") or PickleKeyValueCodec()
+        codec = config.get("CODEC") or JsonKeyValueCodec()
         if (
             has_app_context()
             and not current_app.debug
@@ -114,7 +118,16 @@ class SupersetMetastoreCache(BaseCache):
         # pylint: disable=import-outside-toplevel
         from superset.daos.key_value import KeyValueDAO
 
-        return KeyValueDAO.get_value(RESOURCE, self.get_key(key), self.codec)
+        try:
+            return KeyValueDAO.get_value(RESOURCE, self.get_key(key), self.codec)
+        except (KeyValueCodecDecodeException, ValueError):
+            logger.warning(
+                "Unable to decode metastore cache entry for key %s with %s; "
+                "treating as a cache miss",
+                key,
+                type(self.codec).__name__,
+            )
+            return None
 
     def has(self, key: str) -> bool:
         entry = self.get(key)

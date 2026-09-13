@@ -104,7 +104,11 @@ const controlPanel: ControlPanelConfig = {
       label: t('Chart options'),
       expanded: true,
       controlSetRows: [
-        [<ControlSubSectionHeader>{t('Layout')}</ControlSubSectionHeader>],
+        [
+          <ControlSubSectionHeader key="layout">
+            {t('Layout')}
+          </ControlSubSectionHeader>,
+        ],
         [
           {
             name: 'layout',

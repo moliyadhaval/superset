@@ -27,7 +27,7 @@ import { styled, css } from '@apache-superset/core/theme';
 import QueryTable from 'src/SqlLab/components/QueryTable';
 import { SqlLabRootState } from 'src/SqlLab/types';
 import { useEditorQueriesQuery } from 'src/hooks/apiResources/queries';
-import useEffectEvent from 'src/hooks/useEffectEvent';
+import useEventCallback from 'src/hooks/useEventCallback';
 import useQueryEditor from 'src/SqlLab/hooks/useQueryEditor';
 import PanelToolbar from 'src/components/PanelToolbar';
 import { ViewLocations } from 'src/SqlLab/contributions';
@@ -102,7 +102,7 @@ const QueryHistory = ({
     [queries, data, editorId],
   );
 
-  const loadNext = useEffectEvent(() => {
+  const loadNext = useEventCallback(() => {
     setPageIndex(pageIndex + 1);
   });
 

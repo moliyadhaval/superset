@@ -24,7 +24,7 @@ import { useComponentDidUpdate } from '@superset-ui/core';
 import { Grid } from '@superset-ui/core/components';
 import { useViews } from 'src/core';
 import { Splitter } from 'src/components/Splitter';
-import useEffectEvent from 'src/hooks/useEffectEvent';
+import useEventCallback from 'src/hooks/useEventCallback';
 import useStoredSidebarWidth from 'src/components/ResizableSidebar/useStoredSidebarWidth';
 import {
   SQL_EDITOR_LEFTBAR_WIDTH,
@@ -80,7 +80,7 @@ const AppLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
     'sqllab:rightbar',
     SQL_EDITOR_RIGHTBAR_WIDTH,
   );
-  const autoHide = useEffectEvent(() => {
+  const autoHide = useEventCallback(() => {
     if (leftWidth > 0) {
       setLeftWidth(0);
     }

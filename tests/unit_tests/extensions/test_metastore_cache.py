@@ -15,10 +15,15 @@
 # specific language governing permissions and limitations
 # under the License.
 
+from uuid import UUID
+
 from flask import Flask
+from pytest_mock import MockerFixture
 
 from superset.extensions.metastore_cache import SupersetMetastoreCache
 from superset.key_value.types import JsonKeyValueCodec, PickleKeyValueCodec
+
+NAMESPACE = UUID("ee173d1b-ccf3-40aa-941c-985c15224496")
 
 
 def test_factory_defaults_to_json_codec(app: Flask) -> None:
@@ -32,3 +37,30 @@ def test_factory_honors_explicit_codec(app: Flask) -> None:
     cache = SupersetMetastoreCache.factory(app, {"CODEC": codec}, [], {})
     assert isinstance(cache, SupersetMetastoreCache)
     assert cache.codec is codec
+
+
+def test_get_treats_legacy_pickle_entry_as_miss(mocker: MockerFixture) -> None:
+    entry = mocker.MagicMock()
+    entry.is_expired.return_value = False
+    entry.value = PickleKeyValueCodec().encode({"foo": "bar"})
+    mocker.patch(
+        "superset.daos.key_value.KeyValueDAO.get_entry",
+        return_value=entry,
+    )
+    cache = SupersetMetastoreCache(namespace=NAMESPACE, codec=JsonKeyValueCodec())
+
+    assert cache.get("foo") is None
+    assert cache.has("foo") is False
+
+
+def test_get_decodes_json_entry(mocker: MockerFixture) -> None:
+    entry = mocker.MagicMock()
+    entry.is_expired.return_value = False
+    entry.value = JsonKeyValueCodec().encode({"foo": "bar"})
+    mocker.patch(
+        "superset.daos.key_value.KeyValueDAO.get_entry",
+        return_value=entry,
+    )
+    cache = SupersetMetastoreCache(namespace=NAMESPACE, codec=JsonKeyValueCodec())
+
+    assert cache.get("foo") == {"foo": "bar"}

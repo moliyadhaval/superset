@@ -24,6 +24,7 @@ assists people when migrating to a new version.
 
 ## Next
 
+- `SupersetMetastoreCache` now defaults to `JsonKeyValueCodec` when a cache config omits `CODEC`; previously it defaulted to `PickleKeyValueCodec`. `FILTER_STATE_CACHE_CONFIG` and `EXPLORE_FORM_DATA_CACHE_CONFIG` already set the JSON codec explicitly and are unaffected. Deployments that point another cache (e.g. `DATA_CACHE_CONFIG`, `CACHE_CONFIG`, `THUMBNAIL_CACHE_CONFIG`) at `SupersetMetastoreCache` without a `CODEC` and store non-JSON values must add `"CODEC": PickleKeyValueCodec()` to keep the previous behaviour, as existing pickled entries under those configs cannot be decoded by the JSON codec.
 - `SAMPLES_ROW_LIMIT` is now the default for `/datasource/samples` requests without a valid explicit `per_page`, rather than a hard per-request ceiling; explicit limits are honored up to the existing global row-limit ceiling, matching `/chart/data` SAMPLES requests.
 
 ### MCP tool results preserve stored string values

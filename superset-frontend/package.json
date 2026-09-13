@@ -391,6 +391,7 @@
     "@luma.gl/gltf": "~9.2.5",
     "@luma.gl/shadertools": "~9.2.5",
     "@luma.gl/webgl": "~9.2.5",
+    "brace-expansion@>=5 <6": ">=5.0.9",
     "core-js": "^3.38.1",
     "dompurify": "^3.4.11",
     "esbuild": "^0.28.1",
@@ -408,15 +409,12 @@
     "jest-mock": "^30.4.0",
     "jest-runtime": "^30.4.0",
     "jest-util": "^30.4.0",
+    "js-yaml@>=3 <4": "^3.15.2",
+    "js-yaml@>=4 <5": "^4.3.2",
     "jspdf": "^4.2.0",
-    "lerna": {
-      "js-yaml": "^4.3.0"
-    },
-    "minimatch@>=10": {
-      "brace-expansion": ">=5.0.8"
-    },
     "nanoid@>=3 <4": "3.3.18",
     "nwsapi": "^2.2.13",
+    "pacote@>=21 <22": "^21.5.1",
     "puppeteer": "^22.4.1",
     "tar": "^7.5.16",
     "typescript-json-schema": "^0.68.0",

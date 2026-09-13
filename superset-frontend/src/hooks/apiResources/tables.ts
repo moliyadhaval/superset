@@ -18,7 +18,7 @@
  */
 import { useCallback, useMemo, useEffect, useRef } from 'react';
 import { ClientErrorObject } from '@superset-ui/core';
-import useEffectEvent from 'src/hooks/useEffectEvent';
+import useEventCallback from 'src/hooks/useEventCallback';
 import { toQueryString } from 'src/utils/urlUtils';
 import { api, JsonResponse } from './queryApi';
 
@@ -199,11 +199,13 @@ export function useTables(options: Params) {
   );
   const [trigger] = useLazyTablesQuery();
 
-  const handleOnSuccess = useEffectEvent((data: Data, isRefetched: boolean) => {
-    onSuccess?.(data, isRefetched);
-  });
+  const handleOnSuccess = useEventCallback(
+    (data: Data, isRefetched: boolean) => {
+      onSuccess?.(data, isRefetched);
+    },
+  );
 
-  const handleOnError = useEffectEvent((error: ClientErrorObject) => {
+  const handleOnError = useEventCallback((error: ClientErrorObject) => {
     onError?.(error);
   });
 

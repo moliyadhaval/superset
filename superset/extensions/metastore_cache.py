@@ -14,6 +14,7 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
+import logging
 from datetime import datetime, timedelta
 from typing import Any, Optional
 from uuid import UUID, uuid3
@@ -23,7 +24,10 @@ from flask_caching import BaseCache
 from sqlalchemy.exc import SQLAlchemyError
 
 from superset import db
-from superset.key_value.exceptions import KeyValueCreateFailedError
+from superset.key_value.exceptions import (
+    KeyValueCodecDecodeException,
+    KeyValueCreateFailedError,
+)
 from superset.key_value.types import (
     JsonKeyValueCodec,
     KeyValueCodec,
@@ -33,6 +37,8 @@ from superset.key_value.utils import get_uuid_namespace
 from superset.utils.decorators import transaction
 
 RESOURCE = KeyValueResource.METASTORE_CACHE
+
+logger = logging.getLogger(__name__)
 
 
 class SupersetMetastoreCache(BaseCache):
@@ -105,7 +111,18 @@ class SupersetMetastoreCache(BaseCache):
         # pylint: disable=import-outside-toplevel
         from superset.daos.key_value import KeyValueDAO
 
-        return KeyValueDAO.get_value(RESOURCE, self.get_key(key), self.codec)
+        try:
+            return KeyValueDAO.get_value(RESOURCE, self.get_key(key), self.codec)
+        except (ValueError, KeyValueCodecDecodeException):
+            # Entries written with a different codec (e.g. a legacy pickle
+            # payload read back through the JSON codec) are treated as misses.
+            logger.warning(
+                "Unable to decode metastore cache entry %s with %s; "
+                "treating as a cache miss",
+                key,
+                type(self.codec).__name__,
+            )
+            return None
 
     def has(self, key: str) -> bool:
         entry = self.get(key)

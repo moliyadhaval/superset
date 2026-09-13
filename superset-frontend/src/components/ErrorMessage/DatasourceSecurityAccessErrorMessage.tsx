@@ -131,7 +131,7 @@ export function DatasourceSecurityAccessErrorMessage({
             {t('This may be triggered by:')}
             <br />
             {extra?.issue_codes?.flatMap((issueCode, idx, arr) => [
-              <IssueCode {...issueCode} key={issueCode.code} />,
+              <IssueCode key={issueCode.code} {...issueCode} />,
               idx < arr.length - 1 ? <br key={`br-${issueCode.code}`} /> : null,
             ])}
           </p>

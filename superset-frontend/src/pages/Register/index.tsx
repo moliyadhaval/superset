@@ -93,6 +93,7 @@ export default function Login() {
           )}
           extra={[
             <Button
+              key="login"
               type="default"
               href={ensureAppRoot('/login/')}
               data-test="login-button"

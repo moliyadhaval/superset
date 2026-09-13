@@ -139,7 +139,11 @@ function createCustomizeSection(
   controlSuffix: string,
 ): ControlSetRow[] {
   return [
-    [<ControlSubSectionHeader>{label}</ControlSubSectionHeader>],
+    [
+      <ControlSubSectionHeader key={`customize-${controlSuffix}`}>
+        {label}
+      </ControlSubSectionHeader>,
+    ],
     [
       {
         name: `seriesType${controlSuffix}`,
@@ -280,7 +284,11 @@ function createCustomizeSection(
         },
       },
     ],
-    [<ControlSubSectionHeader>{t('Series Order')}</ControlSubSectionHeader>],
+    [
+      <ControlSubSectionHeader key="series-order">
+        {t('Series Order')}
+      </ControlSubSectionHeader>,
+    ],
     [
       {
         name: `sort_series_type${controlSuffix}`,
@@ -367,12 +375,20 @@ const config: ControlPanelConfig = {
         ['zoomable'],
         [minorTicks],
         ...legendSection,
-        [<ControlSubSectionHeader>{t('X Axis')}</ControlSubSectionHeader>],
+        [
+          <ControlSubSectionHeader key="x-axis">
+            {t('X Axis')}
+          </ControlSubSectionHeader>,
+        ],
         ['x_axis_time_format'],
         [xAxisLabelRotation],
         [xAxisLabelInterval],
         [forceMaxInterval],
-        [<ControlSubSectionHeader>{t('Tooltip')}</ControlSubSectionHeader>],
+        [
+          <ControlSubSectionHeader key="tooltip">
+            {t('Tooltip')}
+          </ControlSubSectionHeader>,
+        ],
         [
           {
             name: 'show_query_identifiers',
@@ -388,8 +404,11 @@ const config: ControlPanelConfig = {
           },
         ],
         ...richTooltipSection.slice(1), // Skip the tooltip header since we added our own
-        // eslint-disable-next-line react/jsx-key
-        [<ControlSubSectionHeader>{t('Y Axis')}</ControlSubSectionHeader>],
+        [
+          <ControlSubSectionHeader key="y-axis">
+            {t('Y Axis')}
+          </ControlSubSectionHeader>,
+        ],
         [
           {
             name: 'minorSplitLine',

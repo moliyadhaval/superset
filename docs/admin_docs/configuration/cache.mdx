@@ -64,8 +64,15 @@ DATA_CACHE_CONFIG = {
     "CACHE_TYPE": "SupersetMetastoreCache",
     "CACHE_KEY_PREFIX": "superset_results",  # make sure this string is unique to avoid collisions
     "CACHE_DEFAULT_TIMEOUT": 86400,  # 60 seconds * 60 minutes * 24 hours
+    "CODEC": PickleKeyValueCodec(),  # chart data is not JSON-serializable
 }
 ```
+
+The built-in cache serializes values with `JsonKeyValueCodec` unless a `CODEC` is
+provided. Caches holding non-JSON-serializable values (such as chart data) must set
+`"CODEC": PickleKeyValueCodec()` (`from superset.key_value.types import
+PickleKeyValueCodec`). Only do so when the metadata database is fully trusted, as
+unpickling data is unsafe if the stored bytes can be tampered with.
 
 ## Chart Cache Timeout
 

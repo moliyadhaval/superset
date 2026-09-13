@@ -18,7 +18,9 @@ runs:
       if: ${{ inputs.from-npm == 'true' }}
       shell: bash
       # zizmor: ignore[adhoc-packages] - supersetbot is a first-party Apache CLI (apache-superset/supersetbot) installed globally as a tool; a global CLI install has no application manifest/lockfile context
-      run: npm install -g supersetbot
+      run: npm install -g "supersetbot@${SUPERSETBOT_VERSION}"
+      env:
+        SUPERSETBOT_VERSION: "0.5.44"
 
     - name: "Checkout ${{ github.ref }} ( ${{ github.sha }} )"
       if: ${{ inputs.from-npm == 'false' }}

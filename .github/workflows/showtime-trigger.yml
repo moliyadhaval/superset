@@ -104,11 +104,24 @@ jobs:
             console.log(`✅ Authorized maintainer: ${actor}`);
             core.setOutput('authorized', 'true');
 
+      # The install set is resolved from the base ref (never the PR) and every
+      # distribution is hash-verified: the package is executed by steps holding
+      # the AWS, DockerHub and GitHub credentials below. This step itself runs
+      # without any secret in its environment.
+      - name: Checkout base Showtime requirements
+        if: steps.auth.outputs.authorized == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: base
+          sparse-checkout: .github/workflows/showtime-requirements.txt
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
       - name: Install Superset Showtime
         if: steps.auth.outputs.authorized == 'true'
         run: |
           echo "::notice::Maintainer $GITHUB_ACTOR triggered deploy for PR ${PULL_REQUEST_NUMBER}"
-          pip install --upgrade superset-showtime
+          pip install --require-hashes -r base/.github/workflows/showtime-requirements.txt
           showtime version
 
         env:
@@ -120,12 +133,13 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EVENT_PR_NUMBER: ${{ github.event.pull_request.number }}
           INPUT_PR_NUMBER: ${{ github.event.inputs.pr_number }}
           INPUT_SHA: ${{ github.event.inputs.sha }}
         run: |
           # Bulletproof PR number extraction
-          if [[ -n "${{ github.event.pull_request.number }}" ]]; then
-            PR_NUM="${{ github.event.pull_request.number }}"
+          if [[ -n "${EVENT_PR_NUMBER}" ]]; then
+            PR_NUM="${EVENT_PR_NUMBER}"
           elif [[ -n "${INPUT_PR_NUMBER}" ]]; then
             PR_NUM="${INPUT_PR_NUMBER}"
           else
@@ -165,9 +179,22 @@ jobs:
           # checkout is an explicit, authorized opt-in rather than an automatic one.
           allow-unsafe-pr-checkout: true
 
+      # Local actions resolve against the checked-out tree, so they must come from
+      # the base ref rather than the PR: the PR tree is untrusted, while the steps
+      # below hold DockerHub and AWS credentials. Only `.github/actions` is fetched
+      # so nothing else lands in the PR's docker build context.
+      - name: Checkout base composite actions (only if build needed)
+        if: steps.auth.outputs.authorized == 'true' && steps.check.outputs.build_needed == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: base
+          sparse-checkout: .github/actions
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+
       - name: Setup Docker Environment (only if build needed)
         if: steps.auth.outputs.authorized == 'true' && steps.check.outputs.build_needed == 'true'
-        uses: ./.github/actions/setup-docker
+        uses: ./base/.github/actions/setup-docker
         with:
           dockerhub-user: ${{ secrets.DOCKERHUB_USER }}
           dockerhub-token: ${{ secrets.DOCKERHUB_TOKEN }}

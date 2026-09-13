@@ -90,7 +90,7 @@ code_hardening() {
   jq -r '.results | length as $n | "bandit medium+ findings: \($n) (most carry an intentional noqa; triage before reporting)"' "$OUT/bandit.json"
   radon cc superset -n E -j > "$OUT/radon.json"
   jq -r 'to_entries[] | .key as $f | .value[] | "\(.complexity)\t\(.rank)\t\($f):\(.lineno) \(.name)"' "$OUT/radon.json" | sort -rn | head -15
-  ruff check . --statistics || true
+  ruff check . --statistics && echo "ruff check: no violations" || true
   ruff format --check . | tail -1 || true
 }
 

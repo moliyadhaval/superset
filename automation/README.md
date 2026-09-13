@@ -146,7 +146,7 @@ and `docker-compose.yml` for that.
 docker build -t superset-automation -f automation/Dockerfile .
 
 # interactive shell with the repo mounted at /workspace
-docker run --rm -it -v "$PWD":/workspace -e GH_TOKEN -e DEVIN_API_KEY superset-automation
+docker run --rm -it --user "$(id -u):$(id -g)" -v "$PWD":/workspace -e GH_TOKEN -e DEVIN_API_KEY superset-automation
 ```
 
 Inside the container (or on any machine with the same tools):

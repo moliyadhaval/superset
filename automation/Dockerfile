@@ -21,7 +21,11 @@
 # scan uses plus the GitHub CLI, so anyone can run the same checks locally.
 #
 #   docker build -t superset-automation -f automation/Dockerfile .
-#   docker run --rm -it -v "$PWD":/workspace -e GH_TOKEN superset-automation
+#   docker run --rm -it --user "$(id -u):$(id -g)" -v "$PWD":/workspace -e GH_TOKEN superset-automation
+#
+# Run with --user so the reports written to automation/out/ are owned by you,
+# not root. HOME is pre-created world-writable so gh/npm/pip-audit caches work
+# for any uid.
 #
 ARG PY_VER=3.11-slim-bookworm
 FROM python:${PY_VER}
@@ -32,6 +36,7 @@ ARG RUFF_VERSION=0.9.7
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PIP_NO_CACHE_DIR=1 \
     PYTHONUNBUFFERED=1 \
+    HOME=/home/toolbox \
     WORKSPACE=/workspace
 
 RUN apt-get update \
@@ -55,7 +60,8 @@ RUN apt-get update \
 RUN pip install pip-audit bandit radon "ruff==${RUFF_VERSION}"
 
 COPY automation/scripts/ /usr/local/bin/
-RUN chmod +x /usr/local/bin/*.sh
+RUN chmod +x /usr/local/bin/*.sh \
+    && mkdir -p ${HOME} ${WORKSPACE} && chmod 1777 ${HOME}
 
 WORKDIR ${WORKSPACE}
 CMD ["/bin/bash"]

@@ -152,7 +152,7 @@ click-option-group==0.5.9
     # via
     #   -c requirements/base-constraint.txt
     #   apache-superset
-click-plugins==1.1.1
+click-plugins==1.1.1.2
     # via
     #   -c requirements/base-constraint.txt
     #   celery
@@ -468,7 +468,7 @@ jmespath==1.1.0
     # via
     #   boto3
     #   botocore
-joserfc==1.7.4
+joserfc==1.7.5
     # via fastmcp-slim
 jsonpath-ng==1.8.0
     # via

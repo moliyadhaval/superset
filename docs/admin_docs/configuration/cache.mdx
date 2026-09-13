@@ -60,12 +60,21 @@ to cache other data.
 For example, to use the built-in cache to store chart data, use the following config:
 
 ```python
+from superset.key_value.types import PickleKeyValueCodec
+
 DATA_CACHE_CONFIG = {
     "CACHE_TYPE": "SupersetMetastoreCache",
     "CACHE_KEY_PREFIX": "superset_results",  # make sure this string is unique to avoid collisions
     "CACHE_DEFAULT_TIMEOUT": 86400,  # 60 seconds * 60 minutes * 24 hours
+    "CODEC": PickleKeyValueCodec(),
 }
 ```
+
+The built-in cache serializes entries with `JsonKeyValueCodec` unless `CODEC` says
+otherwise. Chart data payloads are not JSON-serializable, so this config selects
+`PickleKeyValueCodec` explicitly. Only use it when the metadata database is fully
+within the operator's trust boundary, since decoding a pickled value executes the
+data it reads.
 
 ## Chart Cache Timeout
 

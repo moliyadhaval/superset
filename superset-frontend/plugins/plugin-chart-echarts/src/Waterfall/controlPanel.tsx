@@ -67,7 +67,7 @@ const config: ControlPanelConfig = {
       expanded: true,
       controlSetRows: [
         [
-          <ControlSubSectionHeader>
+          <ControlSubSectionHeader key="series-increase-setting">
             {t('Series increase setting')}
           </ControlSubSectionHeader>,
         ],
@@ -97,7 +97,7 @@ const config: ControlPanelConfig = {
           },
         ],
         [
-          <ControlSubSectionHeader>
+          <ControlSubSectionHeader key="series-decrease-setting">
             {t('Series decrease setting')}
           </ControlSubSectionHeader>,
         ],
@@ -127,7 +127,7 @@ const config: ControlPanelConfig = {
           },
         ],
         [
-          <ControlSubSectionHeader>
+          <ControlSubSectionHeader key="series-total-setting">
             {t('Series total setting')}
           </ControlSubSectionHeader>,
         ],

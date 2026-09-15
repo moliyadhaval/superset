@@ -23,7 +23,7 @@ import URI from 'urijs';
 import { pick } from 'lodash-es';
 import { useComponentDidUpdate } from '@superset-ui/core';
 import { Skeleton } from '@superset-ui/core/components';
-import useEffectEvent from 'src/hooks/useEffectEvent';
+import useEventCallback from 'src/hooks/useEventCallback';
 import { useLocationState } from 'src/pages/SqlLab/LocationContext';
 import {
   addNewQueryEditor,
@@ -58,7 +58,7 @@ const PopEditorTab: React.FC<{ children?: React.ReactNode }> = ({
     }
   }, [activeQueryEditorId]);
 
-  const popSqlEditor = useEffectEvent(async () => {
+  const popSqlEditor = useEventCallback(async () => {
     const bootstrapData = getBootstrapData();
     const {
       id = undefined,

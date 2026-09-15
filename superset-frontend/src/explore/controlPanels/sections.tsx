@@ -126,7 +126,7 @@ export const NVD3TimeSeries: ControlPanelSectionConfig[] = [
     ),
     controlSetRows: [
       [
-        <ControlSubSectionHeader>
+        <ControlSubSectionHeader key="rolling-window-header">
           {t('Rolling window')}
         </ControlSubSectionHeader>,
       ],
@@ -179,7 +179,7 @@ export const NVD3TimeSeries: ControlPanelSectionConfig[] = [
         },
       ],
       [
-        <ControlSubSectionHeader>
+        <ControlSubSectionHeader key="time-comparison-header">
           {t('Time comparison')}
         </ControlSubSectionHeader>,
       ],
@@ -231,7 +231,11 @@ export const NVD3TimeSeries: ControlPanelSectionConfig[] = [
           },
         },
       ],
-      [<ControlSubSectionHeader>{t('Resample')}</ControlSubSectionHeader>],
+      [
+        <ControlSubSectionHeader key="resample-header">
+          {t('Resample')}
+        </ControlSubSectionHeader>,
+      ],
       [
         {
           name: 'resample_rule',
@@ -301,7 +305,7 @@ function buildMatrixifySection(
       [`matrixify_topn_metric_${axis}`],
       [`matrixify_topn_order_${axis}`],
       [
-        <ControlSubSectionHeader>
+        <ControlSubSectionHeader key="customization-header">
           {t('Customization and styling')}
         </ControlSubSectionHeader>,
       ],

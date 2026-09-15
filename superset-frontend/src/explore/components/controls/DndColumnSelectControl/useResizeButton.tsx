@@ -134,6 +134,7 @@ export default function useResizeButton(
 
   return [
     <Icons.ArrowsAltOutlined
+      key="resize-button"
       // Drag-to-resize handle activated via mousedown, not click; there's
       // no keyboard equivalent, so role="button" (which implies a
       // click/Enter/Space-activatable control) isn't quite right, but no

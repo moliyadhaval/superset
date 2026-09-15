@@ -147,7 +147,11 @@ const config: ControlPanelConfig = {
         [subtitleFontSize],
         [showMetricNameControl],
         [metricNameFontSizeWithVisibility],
-        [<ControlSubSectionHeader>{t('X Axis')}</ControlSubSectionHeader>],
+        [
+          <ControlSubSectionHeader key="x-axis-header">
+            {t('X Axis')}
+          </ControlSubSectionHeader>,
+        ],
         [
           {
             name: 'show_x_axis',
@@ -176,7 +180,11 @@ const config: ControlPanelConfig = {
             },
           },
         ],
-        [<ControlSubSectionHeader>{t('Y Axis')}</ControlSubSectionHeader>],
+        [
+          <ControlSubSectionHeader key="y-axis-header">
+            {t('Y Axis')}
+          </ControlSubSectionHeader>,
+        ],
         [
           {
             name: 'show_y_axis',
@@ -241,9 +249,8 @@ const config: ControlPanelConfig = {
       label: t('Advanced Analytics'),
       expanded: false,
       controlSetRows: [
-        // eslint-disable-next-line react/jsx-key
         [
-          <ControlSubSectionHeader>
+          <ControlSubSectionHeader key="rolling-window-header">
             {t('Rolling Window')}
           </ControlSubSectionHeader>,
         ],
@@ -299,7 +306,11 @@ const config: ControlPanelConfig = {
             },
           },
         ],
-        [<ControlSubSectionHeader>{t('Resample')}</ControlSubSectionHeader>],
+        [
+          <ControlSubSectionHeader key="resample-header">
+            {t('Resample')}
+          </ControlSubSectionHeader>,
+        ],
         [
           {
             name: 'resample_rule',

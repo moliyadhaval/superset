@@ -116,7 +116,11 @@ const config: ControlPanelConfig = {
       controlSetRows: [
         ['color_scheme'],
         ...legendSection,
-        [<ControlSubSectionHeader>{t('Labels')}</ControlSubSectionHeader>],
+        [
+          <ControlSubSectionHeader key="labels-header">
+            {t('Labels')}
+          </ControlSubSectionHeader>,
+        ],
         [
           {
             name: 'show_labels',
@@ -187,7 +191,11 @@ const config: ControlPanelConfig = {
             },
           },
         ],
-        [<ControlSubSectionHeader>{t('Radar')}</ControlSubSectionHeader>],
+        [
+          <ControlSubSectionHeader key="radar-header">
+            {t('Radar')}
+          </ControlSubSectionHeader>,
+        ],
         [
           {
             name: 'column_config',

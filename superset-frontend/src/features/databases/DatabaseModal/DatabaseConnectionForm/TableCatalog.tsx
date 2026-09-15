@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+import { Fragment } from 'react';
 import { t } from '@apache-superset/core/translation';
 import { css, SupersetTheme } from '@apache-superset/core/theme';
 import {
@@ -46,7 +47,7 @@ export const TableCatalog = ({
       </Typography.Title>
       <div>
         {tableCatalog?.map((sheet: CatalogObject, idx: number) => (
-          <>
+          <Fragment key={idx}>
             <FormLabel className="catalog-label">
               {t('Google Sheet Name and URL')}
             </FormLabel>
@@ -104,7 +105,7 @@ export const TableCatalog = ({
               }
               value={sheet.value}
             />
-          </>
+          </Fragment>
         ))}
         <StyledFooterButton
           className="catalog-add-btn"

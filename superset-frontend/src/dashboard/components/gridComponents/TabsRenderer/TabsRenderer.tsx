@@ -310,9 +310,9 @@ const TabsRenderer = memo<TabsRendererProps>(
                   <DefaultTabBar {...tabBarProps}>
                     {(node: React.ReactElement) => (
                       <DraggableTabNode
+                        key={node.key}
                         {...(node as React.ReactElement<DraggableTabNodeProps>)
                           .props}
-                        key={node.key}
                         data-node-key={node.key as string}
                         disabled={isEditingTabTitle}
                       >

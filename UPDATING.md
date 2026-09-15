@@ -24,6 +24,23 @@ assists people when migrating to a new version.
 
 ## Next
 
+### `SupersetMetastoreCache` defaults to the JSON codec
+
+A cache configured with `"CACHE_TYPE": "SupersetMetastoreCache"` and no `"CODEC"`
+key serializes entries with `JsonKeyValueCodec` instead of `PickleKeyValueCodec`,
+matching the extension storage registry's `DEFAULT_CODEC`. Decoding a pickle stream
+executes arbitrary code, so it is no longer the implicit choice; the accompanying
+runtime warning has been removed.
+
+Superset's own cache configs (`FILTER_STATE_CACHE_CONFIG`,
+`EXPLORE_FORM_DATA_CACHE_CONFIG`, `EXTENSIONS_EPHEMERAL_STORAGE`) already set
+`JsonKeyValueCodec` explicitly and are unaffected. Operators who point another cache
+(for example `CACHE_CONFIG` or `DATA_CACHE_CONFIG`) at `SupersetMetastoreCache` and
+store values JSON cannot represent must set `"CODEC": PickleKeyValueCodec()` in that
+cache config to keep the previous behavior. Existing pickle-encoded entries written
+under the old default are not readable by the JSON codec and are treated as cache
+misses.
+
 - `SAMPLES_ROW_LIMIT` is now the default for `/datasource/samples` requests without a valid explicit `per_page`, rather than a hard per-request ceiling; explicit limits are honored up to the existing global row-limit ceiling, matching `/chart/data` SAMPLES requests.
 
 ### MCP tool results preserve stored string values

@@ -17,4 +17,4 @@
 # under the License.
 requests==2.33.0
 tenacity==9.1.2
-pytest==8.3.5
+pytest==9.0.3

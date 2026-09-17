@@ -72,7 +72,7 @@ click-didyoumean==0.3.1
     # via celery
 click-option-group==0.5.7
     # via apache-superset (pyproject.toml)
-click-plugins==1.1.1
+click-plugins==1.1.1.2
     # via celery
 click-repl==0.3.0
     # via celery
@@ -120,7 +120,7 @@ flask==2.3.3
     #   flask-session
     #   flask-sqlalchemy
     #   flask-wtf
-flask-appbuilder==5.2.2
+flask-appbuilder==5.2.3
     # via
     #   apache-superset (pyproject.toml)
     #   apache-superset-core
@@ -381,7 +381,7 @@ six==1.17.0
     #   wtforms-json
 slack-sdk==3.43.0
     # via apache-superset (pyproject.toml)
-sqlalchemy==2.0.52
+sqlalchemy==2.0.54
     # via
     #   apache-superset (pyproject.toml)
     #   alembic

@@ -20,7 +20,7 @@ amqp==5.3.1
     # via
     #   -c requirements/base-constraint.txt
     #   kombu
-annotated-types==0.7.0
+annotated-types==0.8.0
     # via
     #   -c requirements/base-constraint.txt
     #   pydantic
@@ -156,7 +156,7 @@ click-plugins==1.1.1
     # via
     #   -c requirements/base-constraint.txt
     #   celery
-click-repl==0.3.0
+click-repl==0.4.0
     # via
     #   -c requirements/base-constraint.txt
     #   celery
@@ -218,9 +218,9 @@ dnspython==2.7.0
     #   email-validator
 docker==7.0.0
     # via apache-superset
-docstring-parser==0.17.0
+docstring-parser==0.18.0
     # via cyclopts
-docutils==0.22.2
+docutils==0.23
     # via rich-rst
 duckdb==1.5.5
     # via
@@ -277,7 +277,7 @@ flask-caching==2.4.1
     # via
     #   -c requirements/base-constraint.txt
     #   apache-superset
-flask-compress==1.24
+flask-compress==1.25
     # via
     #   -c requirements/base-constraint.txt
     #   apache-superset
@@ -337,7 +337,7 @@ geopy==2.4.1
     # via
     #   -c requirements/base-constraint.txt
     #   apache-superset
-gevent==26.8.0
+gevent==26.9.0
     # via apache-superset
 google-api-core==2.33.0
     # via
@@ -1019,6 +1019,7 @@ typing-extensions==4.16.0
     #   apache-superset
     #   apache-superset-core
     #   cattrs
+    #   click-repl
     #   exceptiongroup
     #   fastmcp-slim
     #   grpcio
@@ -1056,7 +1057,7 @@ url-normalize==2.2.1
     # via
     #   -c requirements/base-constraint.txt
     #   requests-cache
-urllib3==2.7.0
+urllib3==2.8.0
     # via
     #   -c requirements/base-constraint.txt
     #   botocore
@@ -1126,5 +1127,5 @@ zope-event==5.0
     # via gevent
 zope-interface==5.4.0
     # via gevent
-zstandard==0.23.0
+zstandard==0.25.0
     # via trino

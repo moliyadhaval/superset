@@ -6,7 +6,7 @@ alembic==1.15.2
     # via flask-migrate
 amqp==5.3.1
     # via kombu
-annotated-types==0.7.0
+annotated-types==0.8.0
     # via pydantic
 apispec==6.6.1
     # via
@@ -74,7 +74,7 @@ click-option-group==0.5.7
     # via apache-superset (pyproject.toml)
 click-plugins==1.1.1
     # via celery
-click-repl==0.3.0
+click-repl==0.4.0
     # via celery
 colorama==0.4.6
     # via
@@ -128,7 +128,7 @@ flask-babel==3.1.0
     # via flask-appbuilder
 flask-caching==2.4.1
     # via apache-superset (pyproject.toml)
-flask-compress==1.24
+flask-compress==1.25
     # via apache-superset (pyproject.toml)
 flask-cors==6.0.5
     # via apache-superset (pyproject.toml)
@@ -413,6 +413,7 @@ typing-extensions==4.16.0
     #   alembic
     #   apache-superset-core
     #   cattrs
+    #   click-repl
     #   limits
     #   pydantic
     #   pydantic-core
@@ -431,7 +432,7 @@ tzlocal==5.4.4
     # via celery
 url-normalize==2.2.1
     # via requests-cache
-urllib3==2.7.0
+urllib3==2.8.0
     # via
     #   -r requirements/base.in
     #   requests

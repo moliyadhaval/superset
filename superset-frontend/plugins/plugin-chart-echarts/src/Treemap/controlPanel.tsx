@@ -49,7 +49,11 @@ const config: ControlPanelConfig = {
       expanded: true,
       controlSetRows: [
         ['color_scheme'],
-        [<ControlSubSectionHeader>{t('Labels')}</ControlSubSectionHeader>],
+        [
+          <ControlSubSectionHeader key="labels">
+            {t('Labels')}
+          </ControlSubSectionHeader>,
+        ],
         [
           {
             name: 'show_labels',

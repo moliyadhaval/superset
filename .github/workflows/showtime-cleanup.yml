@@ -8,11 +8,9 @@ on:
   # Manual trigger for testing
   workflow_dispatch:
 
-# Common environment variables
+# Common environment variables (non-sensitive only; credentials are scoped
+# to the step that runs showtime, so the install step never holds them)
 env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: ${{ vars.AWS_REGION || 'us-west-2' }}
   GITHUB_ORG: ${{ github.repository_owner }}
   GITHUB_REPO: ${{ github.event.repository.name }}
@@ -32,9 +30,18 @@ jobs:
 
     steps:
       - name: Install Superset Showtime
-        run: pip install superset-showtime
+        run: pip install "superset-showtime==${SHOWTIME_VERSION}"
+        env:
+          # Pinned exactly: this package runs with the AWS and GitHub
+          # credentials below, so a floating install would hand those secrets
+          # to any compromised release.
+          SHOWTIME_VERSION: "0.7.1"
 
       - name: Cleanup expired environments and orphaned labels
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           echo "Cleaning up environments respecting TTL labels, and pruning orphaned 🎪 labels"
           python -m showtime cleanup --respect-ttl --force

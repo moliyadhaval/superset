@@ -106,7 +106,11 @@ const config: ControlPanelConfig = {
         ['zoomable'],
         [minorTicks],
         ...legendSection,
-        [<ControlSubSectionHeader>{t('X Axis')}</ControlSubSectionHeader>],
+        [
+          <ControlSubSectionHeader key="x-axis">
+            {t('X Axis')}
+          </ControlSubSectionHeader>,
+        ],
         [
           {
             name: 'x_axis_time_format',
@@ -143,10 +147,12 @@ const config: ControlPanelConfig = {
         [xAxisLabelRotation],
         [xAxisLabelInterval],
         [forceMaxInterval],
-        // eslint-disable-next-line react/jsx-key
         ...richTooltipSection,
-        // eslint-disable-next-line react/jsx-key
-        [<ControlSubSectionHeader>{t('Y Axis')}</ControlSubSectionHeader>],
+        [
+          <ControlSubSectionHeader key="y-axis">
+            {t('Y Axis')}
+          </ControlSubSectionHeader>,
+        ],
 
         ['y_axis_format'],
         ['currency_format'],

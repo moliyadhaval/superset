@@ -22,6 +22,7 @@ import { Alert } from '@apache-superset/core/components';
 import { styled, SupersetTheme } from '@apache-superset/core/theme';
 
 import {
+  Fragment,
   FunctionComponent,
   useEffect,
   useRef,
@@ -1628,7 +1629,7 @@ const DatabaseModal: FunctionComponent<DatabaseModalProps> = ({
     ];
 
     return files.map(database => (
-      <>
+      <Fragment key={database}>
         <StyledAlertMargin>
           <Alert
             closable={false}
@@ -1716,7 +1717,7 @@ const DatabaseModal: FunctionComponent<DatabaseModalProps> = ({
             css={formScrollableStyles}
           />
         )}
-      </>
+      </Fragment>
     ));
   };
 

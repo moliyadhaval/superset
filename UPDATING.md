@@ -24,6 +24,7 @@ assists people when migrating to a new version.
 
 ## Next
 
+- `SupersetMetastoreCache` now defaults to `JsonKeyValueCodec` when no `CODEC` is configured for a cache config, instead of `PickleKeyValueCodec`. Deployments that rely on caching non-JSON-serializable values through the metastore cache must set `"CODEC": PickleKeyValueCodec()` explicitly in the relevant `*_CACHE_CONFIG`. Entries previously written with the pickle codec cannot be read by the JSON codec, so clear the affected `key_value` rows (resource `metastore_cache`) or keep the pickle codec configured explicitly when upgrading.
 - `SAMPLES_ROW_LIMIT` is now the default for `/datasource/samples` requests without a valid explicit `per_page`, rather than a hard per-request ceiling; explicit limits are honored up to the existing global row-limit ceiling, matching `/chart/data` SAMPLES requests.
 
 ### MCP tool results preserve stored string values

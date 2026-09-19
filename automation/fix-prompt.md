@@ -1,3 +1,22 @@
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
 A nightly scan issue was just opened on @moliyadhaval/superset. Fix what it reports and open one pull request for it. The triggering issue's payload (number, title, body, labels) is appended below this prompt — read it first; it is the specification for this run.
 
 This is an unattended run: nobody will answer questions. Never ask for input and never wait for a decision — where this prompt gives you a rule, follow the rule and record the reasoning in the PR description.
@@ -54,4 +73,3 @@ Do not stop at PR creation. Take the PR to a green, reviewed state:
 ## If you cannot produce a PR
 
 If nothing is safely auto-fixable, or your changes cannot be made to pass verification, do not open a PR and do not force a partial fix through. Instead comment on the issue explaining what you attempted, what blocked it, and what a human needs to decide. That is a valid, useful outcome for this run.
-

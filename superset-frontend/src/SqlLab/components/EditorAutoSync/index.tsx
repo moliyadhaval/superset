@@ -39,7 +39,7 @@ import {
   setLastUpdatedActiveTab,
   clearDestoryedQueryEditor,
 } from 'src/SqlLab/actions/sqlLab';
-import useEffectEvent from 'src/hooks/useEffectEvent';
+import useEventCallback from 'src/hooks/useEventCallback';
 
 export const INTERVAL = 5000;
 
@@ -109,7 +109,7 @@ const EditorAutoSync: FC = () => {
     INTERVAL,
   );
 
-  const getUnsavedItems = useEffectEvent(unsavedQE =>
+  const getUnsavedItems = useEventCallback(unsavedQE =>
     filterUnsavedQueryEditorList(
       queryEditors,
       unsavedQE,
@@ -117,7 +117,7 @@ const EditorAutoSync: FC = () => {
     ),
   );
 
-  const getUnsavedNewQueryEditor = useEffectEvent(() =>
+  const getUnsavedNewQueryEditor = useEventCallback(() =>
     filterUnsavedQueryEditorList(
       queryEditors,
       unsavedQueryEditor,
@@ -125,7 +125,7 @@ const EditorAutoSync: FC = () => {
     ).find(({ inLocalStorage }) => Boolean(inLocalStorage)),
   );
 
-  const syncCurrentQueryEditor = useEffectEvent(() => {
+  const syncCurrentQueryEditor = useEventCallback(() => {
     if (
       currentQueryEditorId &&
       currentQueryEditorId !== lastUpdatedActiveTab &&
@@ -141,7 +141,7 @@ const EditorAutoSync: FC = () => {
     }
   });
 
-  const syncDeletedQueryEditor = useEffectEvent(() => {
+  const syncDeletedQueryEditor = useEventCallback(() => {
     if (Object.keys(destroyedQueryEditors).length > 0) {
       Object.keys(destroyedQueryEditors).forEach(id => {
         const queryEditorId = queryEditorsById[id]?.tabViewId ?? id;

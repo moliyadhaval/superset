@@ -31,7 +31,7 @@ import App from 'src/SqlLab/components/App';
 import { Button, Loading } from '@superset-ui/core/components';
 import { t } from '@apache-superset/core/translation';
 import EditorAutoSync from 'src/SqlLab/components/EditorAutoSync';
-import useEffectEvent from 'src/hooks/useEffectEvent';
+import useEventCallback from 'src/hooks/useEventCallback';
 import { LocationProvider } from './LocationContext';
 
 export default function SqlLab() {
@@ -43,7 +43,7 @@ export default function SqlLab() {
   const shouldInitialize = lastInitializedAt <= (fulfilledTimeStamp || 0);
   const dispatch = useDispatch();
 
-  const initBootstrapData = useEffectEvent(
+  const initBootstrapData = useEventCallback(
     (sqlLabInitialState: InitialState) => {
       if (shouldInitialize) {
         dispatch(resetState(sqlLabInitialState));

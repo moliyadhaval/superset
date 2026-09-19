@@ -29,7 +29,7 @@ import {
 } from 'react';
 
 import type { editors } from '@apache-superset/core';
-import useEffectEvent from 'src/hooks/useEffectEvent';
+import useEventCallback from 'src/hooks/useEventCallback';
 import { shallowEqual, useSelector } from 'react-redux';
 import { useAppDispatch } from 'src/SqlLab/hooks/useAppDispatch';
 import AutoSizer from 'react-virtualized-auto-sizer';
@@ -594,7 +594,7 @@ const SqlEditor: FC<Props> = ({
     return base;
   }, [getHotkeyConfig, startQuery]);
 
-  const onBeforeUnload = useEffectEvent(event => {
+  const onBeforeUnload = useEventCallback(event => {
     if (
       database?.extra_json?.cancel_query_on_windows_unload &&
       latestQuery?.state === 'running'
@@ -608,7 +608,7 @@ const SqlEditor: FC<Props> = ({
     isFeatureEnabled(FeatureFlag.SqllabBackendPersistence) &&
     !queryEditor.loaded;
 
-  const loadQueryEditor = useEffectEvent(() => {
+  const loadQueryEditor = useEventCallback(() => {
     const duration = Logger.getTimestamp();
     logAction(LOG_ACTIONS_SQLLAB_LOAD_TAB_STATE, {
       duration,
@@ -630,7 +630,7 @@ const SqlEditor: FC<Props> = ({
     return () => {
       window.removeEventListener('beforeunload', onBeforeUnload);
     };
-    // TODO: Remove useEffectEvent deps once https://github.com/facebook/react/pull/25881 is released
+    // TODO: Remove useEventCallback deps once https://github.com/facebook/react/pull/25881 is released
   }, [onBeforeUnload, loadQueryEditor, isActive]);
 
   useEffect(() => {
@@ -676,7 +676,7 @@ const SqlEditor: FC<Props> = ({
     [setQueryEditorAndSaveSql],
   );
 
-  const onSqlChanged = useEffectEvent((sql: string) => {
+  const onSqlChanged = useEventCallback((sql: string) => {
     currentSQL.current = sql;
     dispatch(queryEditorSetSql(queryEditor, sql, undefined));
   });

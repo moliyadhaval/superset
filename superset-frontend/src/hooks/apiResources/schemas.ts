@@ -18,7 +18,7 @@
  */
 import { useCallback, useEffect, useRef } from 'react';
 import { ClientErrorObject } from '@superset-ui/core';
-import useEffectEvent from 'src/hooks/useEffectEvent';
+import useEventCallback from 'src/hooks/useEventCallback';
 import { api, JsonResponse } from './queryApi';
 
 export type SchemaOption = {
@@ -84,13 +84,13 @@ export function useSchemas(options: Params) {
   );
   const [trigger] = useLazySchemasQuery();
 
-  const handleOnSuccess = useEffectEvent(
+  const handleOnSuccess = useEventCallback(
     (data: SchemaOption[], isRefetched: boolean) => {
       onSuccess?.(data, isRefetched);
     },
   );
 
-  const handleOnError = useEffectEvent((error: ClientErrorObject) => {
+  const handleOnError = useEventCallback((error: ClientErrorObject) => {
     onError?.(error);
   });
 

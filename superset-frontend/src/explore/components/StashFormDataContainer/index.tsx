@@ -20,7 +20,7 @@ import { useEffect, FC, ReactNode } from 'react';
 
 import { useDispatch } from 'react-redux';
 import { setStashFormData } from 'src/explore/actions/exploreActions';
-import useEffectEvent from 'src/hooks/useEffectEvent';
+import useEventCallback from 'src/hooks/useEventCallback';
 
 type Props = {
   shouldStash: boolean;
@@ -34,7 +34,7 @@ const StashFormDataContainer: FC<Props> = ({
   children,
 }) => {
   const dispatch = useDispatch();
-  const onVisibleUpdate = useEffectEvent((shouldStash: boolean) =>
+  const onVisibleUpdate = useEventCallback((shouldStash: boolean) =>
     dispatch(setStashFormData(shouldStash, fieldNames)),
   );
   useEffect(() => {

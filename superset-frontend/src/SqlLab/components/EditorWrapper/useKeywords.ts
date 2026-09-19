@@ -34,7 +34,7 @@ import {
 import { schemaEndpoints } from 'src/hooks/apiResources';
 import { api } from 'src/hooks/apiResources/queryApi';
 import { useDatabaseFunctionsQuery } from 'src/hooks/apiResources/databaseFunctions';
-import useEffectEvent from 'src/hooks/useEffectEvent';
+import useEventCallback from 'src/hooks/useEventCallback';
 import type { SqlLabRootState } from 'src/SqlLab/types';
 
 type Params = {
@@ -195,7 +195,7 @@ export function useKeywords(
     return [...columns];
   }, [dbId, normalizedCatalog, apiState, skipFetch]);
 
-  const insertMatch = useEffectEvent((editor: Editor, data: any) => {
+  const insertMatch = useEventCallback((editor: Editor, data: any) => {
     if (data.meta === 'table') {
       dispatch(
         addTable(

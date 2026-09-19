@@ -319,6 +319,17 @@ def test_circuit_breaker_reads_env(monkeypatch: pytest.MonkeyPatch) -> None:
     assert gh.circuit_breaker.recovery_timeout == 7.5
 
 
+@pytest.mark.parametrize("raw", ["nan", "inf", "-inf", "-1", "0", "abc"])
+def test_non_finite_env_floats_fall_back(
+    monkeypatch: pytest.MonkeyPatch, raw: str
+) -> None:
+    monkeypatch.setenv("CIRCUIT_BREAKER_TIMEOUT", raw)
+    monkeypatch.setenv("HTTP_TIMEOUT", raw)
+    gh = GitHub("o/r")
+    assert gh.circuit_breaker.recovery_timeout == 60.0
+    assert gh.policy.timeout == 60.0
+
+
 def test_malformed_json_read_is_retried(fake: tuple[Fake, str]) -> None:
     state, base = fake
     gh = gh_client(base)
@@ -812,6 +823,17 @@ def test_release_cannot_clobber_successor(fake: tuple[Fake, str], git: GitData) 
     assert git.refs[ops.claim_ref(5)] == successor
 
 
+def test_holds_claim_rejects_own_expired_lease(
+    fake: tuple[Fake, str], git: GitData
+) -> None:
+    gh = gh_client(fake[1])
+    token = ops.claim_issue(gh, 5, "me")
+    assert token is not None
+    assert ops.holds_claim(gh, 5, token)
+    git.commits[token]["committer"]["date"] = OLD
+    assert not ops.holds_claim(gh, 5, token)
+
+
 def _dispatch_scripts(state: Fake, session_replies: int = 2) -> None:
     issue = {"number": 9, "title": "t", "html_url": "u", "labels": []}
     state.script["/repos/o/r/issues"] = [(200, [issue])]
@@ -847,6 +869,28 @@ def test_dispatch_claims_then_releases(fake: tuple[Fake, str], git: GitData) -> 
     head = git.head(9)
     assert head is not None
     assert head["message"] == ops.RELEASE_MESSAGE
+
+
+def test_dispatch_release_failure_keeps_dispatched_outcome(
+    fake: tuple[Fake, str], git: GitData
+) -> None:
+    """A secured session must be reported (and commented) even if release fails."""
+    state, base = fake
+    _dispatch_scripts(state)
+    state.script["/sessions"].append(
+        (201, {"session_id": "devin-1", "status": "running"})
+    )
+    orig = git.reply
+
+    def fail_release(method: str, path: str) -> tuple[int, Any, dict[str, str]]:
+        if fake[0].last_payload.get("message") == ops.RELEASE_MESSAGE:
+            return 500, {"message": "boom"}, {}
+        return orig(method, path)
+
+    fake[0].reply = fail_release  # type: ignore[method-assign]
+    outcomes = ops.dispatch(gh_client(base), devin_client(base), fix_prompt="p")
+    assert [o.status for o in outcomes] == ["dispatched"]
+    assert any(c[0] == "POST" and c[1].endswith("/comments") for c in state.calls)
 
 
 def test_dispatch_skips_and_keeps_ref_when_claim_lost(

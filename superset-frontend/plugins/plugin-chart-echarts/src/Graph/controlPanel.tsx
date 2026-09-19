@@ -97,7 +97,11 @@ const controlPanel: ControlPanelConfig = {
       controlSetRows: [
         ['color_scheme'],
         ...legendSection,
-        [<ControlSubSectionHeader>{t('Layout')}</ControlSubSectionHeader>],
+        [
+          <ControlSubSectionHeader key="layout-header">
+            {t('Layout')}
+          </ControlSubSectionHeader>,
+        ],
         [
           {
             name: 'layout',

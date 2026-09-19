@@ -139,7 +139,11 @@ function createCustomizeSection(
   controlSuffix: string,
 ): ControlSetRow[] {
   return [
-    [<ControlSubSectionHeader>{label}</ControlSubSectionHeader>],
+    [
+      <ControlSubSectionHeader key="series-header">
+        {label}
+      </ControlSubSectionHeader>,
+    ],
     [
       {
         name: `seriesType${controlSuffix}`,
@@ -280,7 +284,11 @@ function createCustomizeSection(
         },
       },
     ],
-    [<ControlSubSectionHeader>{t('Series Order')}</ControlSubSectionHeader>],
+    [
+      <ControlSubSectionHeader key="series-order-header">
+        {t('Series Order')}
+      </ControlSubSectionHeader>,
+    ],
     [
       {
         name: `sort_series_type${controlSuffix}`,
@@ -367,12 +375,20 @@ const config: ControlPanelConfig = {
         ['zoomable'],
         [minorTicks],
         ...legendSection,
-        [<ControlSubSectionHeader>{t('X Axis')}</ControlSubSectionHeader>],
+        [
+          <ControlSubSectionHeader key="x-axis-header">
+            {t('X Axis')}
+          </ControlSubSectionHeader>,
+        ],
         ['x_axis_time_format'],
         [xAxisLabelRotation],
         [xAxisLabelInterval],
         [forceMaxInterval],
-        [<ControlSubSectionHeader>{t('Tooltip')}</ControlSubSectionHeader>],
+        [
+          <ControlSubSectionHeader key="tooltip-header">
+            {t('Tooltip')}
+          </ControlSubSectionHeader>,
+        ],
         [
           {
             name: 'show_query_identifiers',

@@ -397,9 +397,17 @@ const config: ControlPanelConfig = {
       tabOverride: 'customize',
       expanded: true,
       controlSetRows: [
-        [<ControlSubSectionHeader>{t('X Axis')}</ControlSubSectionHeader>],
+        [
+          <ControlSubSectionHeader key="x-axis-header">
+            {t('X Axis')}
+          </ControlSubSectionHeader>,
+        ],
         ...createAxisTitleControl('x'),
-        [<ControlSubSectionHeader>{t('Y Axis')}</ControlSubSectionHeader>],
+        [
+          <ControlSubSectionHeader key="y-axis-header">
+            {t('Y Axis')}
+          </ControlSubSectionHeader>,
+        ],
         ...createAxisTitleControl('y'),
       ],
     },
@@ -481,13 +489,21 @@ const config: ControlPanelConfig = {
         ['zoomable'],
         [minorTicks],
         ...legendSection,
-        [<ControlSubSectionHeader>{t('X Axis')}</ControlSubSectionHeader>],
+        [
+          <ControlSubSectionHeader key="x-axis-header">
+            {t('X Axis')}
+          </ControlSubSectionHeader>,
+        ],
         ...createAxisControl('x'),
         [truncateXAxis],
         [xAxisBounds],
         [forceMaxInterval],
         ...richTooltipSection,
-        [<ControlSubSectionHeader>{t('Y Axis')}</ControlSubSectionHeader>],
+        [
+          <ControlSubSectionHeader key="y-axis-header">
+            {t('Y Axis')}
+          </ControlSubSectionHeader>,
+        ],
         ...createAxisControl('y'),
       ],
     },

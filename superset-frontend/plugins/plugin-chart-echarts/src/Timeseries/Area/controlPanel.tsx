@@ -176,7 +176,11 @@ const config: ControlPanelConfig = {
         [minorTicks],
         ['zoomable'],
         ...legendSection,
-        [<ControlSubSectionHeader>{t('X Axis')}</ControlSubSectionHeader>],
+        [
+          <ControlSubSectionHeader key="x-axis-header">
+            {t('X Axis')}
+          </ControlSubSectionHeader>,
+        ],
         [
           {
             name: 'x_axis_time_format',

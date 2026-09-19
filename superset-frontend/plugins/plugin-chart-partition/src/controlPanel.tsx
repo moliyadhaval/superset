@@ -245,9 +245,8 @@ const config: ControlPanelConfig = {
           'of query results',
       ),
       controlSetRows: [
-        // eslint-disable-next-line react/jsx-key
         [
-          <ControlSubSectionHeader>
+          <ControlSubSectionHeader key="rolling-window">
             {t('Rolling Window')}
           </ControlSubSectionHeader>,
         ],
@@ -301,9 +300,8 @@ const config: ControlPanelConfig = {
             },
           },
         ],
-        // eslint-disable-next-line react/jsx-key
         [
-          <ControlSubSectionHeader>
+          <ControlSubSectionHeader key="time-comparison">
             {t('Time Comparison')}
           </ControlSubSectionHeader>,
         ],
@@ -355,7 +353,11 @@ const config: ControlPanelConfig = {
             },
           },
         ],
-        [<ControlSubSectionHeader>{t('Resample')}</ControlSubSectionHeader>],
+        [
+          <ControlSubSectionHeader key="resample">
+            {t('Resample')}
+          </ControlSubSectionHeader>,
+        ],
         [
           {
             name: 'resample_rule',

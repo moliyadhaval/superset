@@ -14,28 +14,25 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-import logging
 from datetime import datetime, timedelta
 from typing import Any, Optional
 from uuid import UUID, uuid3
 
-from flask import current_app, Flask, has_app_context
+from flask import Flask
 from flask_caching import BaseCache
 from sqlalchemy.exc import SQLAlchemyError
 
 from superset import db
 from superset.key_value.exceptions import KeyValueCreateFailedError
 from superset.key_value.types import (
+    JsonKeyValueCodec,
     KeyValueCodec,
     KeyValueResource,
-    PickleKeyValueCodec,
 )
 from superset.key_value.utils import get_uuid_namespace
 from superset.utils.decorators import transaction
 
 RESOURCE = KeyValueResource.METASTORE_CACHE
-
-logger = logging.getLogger(__name__)
 
 
 class SupersetMetastoreCache(BaseCache):
@@ -55,17 +52,11 @@ class SupersetMetastoreCache(BaseCache):
     ) -> BaseCache:
         seed = config.get("CACHE_KEY_PREFIX", "")
         kwargs["namespace"] = get_uuid_namespace(seed, app)
-        codec = config.get("CODEC") or PickleKeyValueCodec()
-        if (
-            has_app_context()
-            and not current_app.debug
-            and isinstance(codec, PickleKeyValueCodec)
-        ):
-            logger.warning(
-                "Using PickleKeyValueCodec with SupersetMetastoreCache may be unsafe, "
-                "use at your own risk."
-            )
-        kwargs["codec"] = codec
+        # Defaults to JSON, matching the extension storage registry's DEFAULT_CODEC.
+        # `PickleKeyValueCodec` remains available as an explicit opt-in, but is not
+        # the default: decoding a pickle stream from the metadata database executes
+        # arbitrary code.
+        kwargs["codec"] = config.get("CODEC") or JsonKeyValueCodec()
         return cls(*args, **kwargs)
 
     def get_key(self, key: str) -> UUID:

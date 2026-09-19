@@ -34,6 +34,7 @@ from __future__ import annotations
 
 import email.utils
 import logging
+import math
 import os
 import time
 from collections.abc import Callable, Iterator
@@ -257,8 +258,10 @@ def _parse_float_env(name: str, default: float) -> float:
     value = os.environ.get(name, str(default))
     try:
         parsed = float(value)
-        if parsed <= 0:
-            log.warning("%s must be positive, using default %f", name, default)
+        if not math.isfinite(parsed) or parsed <= 0:
+            log.warning(
+                "%s must be a positive finite number, using default %f", name, default
+            )
             return default
         return parsed
     except ValueError:

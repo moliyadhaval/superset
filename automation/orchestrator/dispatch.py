@@ -173,22 +173,34 @@ def _advance(gh: GitHub, issue: int, sha: str) -> bool:
         return holds_claim(gh, issue, sha)
 
 
-def holds_claim(gh: GitHub, issue: int, token: str) -> bool:
+def holds_claim(gh: GitHub, issue: int, token: str, ttl: timedelta = CLAIM_TTL) -> bool:
+    """Whether ``token`` is the current claim *and* still inside its lease.
+
+    Once a claim is older than ``ttl`` any other dispatcher may reap it, so
+    the holder must treat it as lost even if the ref has not moved yet.
+    """
     current = gh.get_ref(claim_ref(issue))
-    return current is not None and str(current["object"]["sha"]) == token
+    if current is None or str(current["object"]["sha"]) != token:
+        return False
+    age = datetime.now(timezone.utc) - _commit_date(gh.get_commit(token))
+    return age < ttl
 
 
 def release_issue(gh: GitHub, issue: int, token: str) -> None:
-    """Mark the claim free, unless another dispatcher already took it over.
+    """Best-effort: mark the claim free unless someone already took it over.
 
     The release commit is a child of ``token``, so the fast-forward only
     lands while the ref still points at our claim: there is no window in
-    which an expired holder can clobber a successor.
+    which an expired holder can clobber a successor. Failures are logged,
+    not raised -- an unreleased claim simply expires after :data:`CLAIM_TTL`.
     """
-    tree = str(gh.get_commit(token)["tree"]["sha"])
-    release = str(gh.create_commit(RELEASE_MESSAGE, tree, [token])["sha"])
-    if not _advance(gh, issue, release):
-        log.info("[Issue #%d] claim already taken over; not released", issue)
+    try:
+        tree = str(gh.get_commit(token)["tree"]["sha"])
+        release = str(gh.create_commit(RELEASE_MESSAGE, tree, [token])["sha"])
+        if not _advance(gh, issue, release):
+            log.info("[Issue #%d] claim already taken over; not released", issue)
+    except ApiError as exc:
+        log.warning("[Issue #%d] claim release failed (will expire): %s", issue, exc)
 
 
 def ensure_session(

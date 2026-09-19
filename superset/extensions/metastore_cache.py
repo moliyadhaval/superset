@@ -19,16 +19,19 @@ from datetime import datetime, timedelta
 from typing import Any, Optional
 from uuid import UUID, uuid3
 
-from flask import current_app, Flask, has_app_context
+from flask import Flask
 from flask_caching import BaseCache
 from sqlalchemy.exc import SQLAlchemyError
 
 from superset import db
-from superset.key_value.exceptions import KeyValueCreateFailedError
+from superset.key_value.exceptions import (
+    KeyValueCodecDecodeException,
+    KeyValueCreateFailedError,
+)
 from superset.key_value.types import (
+    JsonKeyValueCodec,
     KeyValueCodec,
     KeyValueResource,
-    PickleKeyValueCodec,
 )
 from superset.key_value.utils import get_uuid_namespace
 from superset.utils.decorators import transaction
@@ -55,17 +58,11 @@ class SupersetMetastoreCache(BaseCache):
     ) -> BaseCache:
         seed = config.get("CACHE_KEY_PREFIX", "")
         kwargs["namespace"] = get_uuid_namespace(seed, app)
-        codec = config.get("CODEC") or PickleKeyValueCodec()
-        if (
-            has_app_context()
-            and not current_app.debug
-            and isinstance(codec, PickleKeyValueCodec)
-        ):
-            logger.warning(
-                "Using PickleKeyValueCodec with SupersetMetastoreCache may be unsafe, "
-                "use at your own risk."
-            )
-        kwargs["codec"] = codec
+        # JSON is the default, matching the extension storage registry's
+        # DEFAULT_CODEC. PickleKeyValueCodec remains available as an explicit
+        # opt-in via the CODEC config, since decoding a pickle stream can
+        # execute arbitrary code.
+        kwargs["codec"] = config.get("CODEC") or JsonKeyValueCodec()
         return cls(*args, **kwargs)
 
     def get_key(self, key: str) -> UUID:
@@ -114,7 +111,18 @@ class SupersetMetastoreCache(BaseCache):
         # pylint: disable=import-outside-toplevel
         from superset.daos.key_value import KeyValueDAO
 
-        return KeyValueDAO.get_value(RESOURCE, self.get_key(key), self.codec)
+        try:
+            return KeyValueDAO.get_value(RESOURCE, self.get_key(key), self.codec)
+        except (ValueError, KeyValueCodecDecodeException):
+            # Entries written with a different codec (e.g. a legacy pickle
+            # payload read back through the JSON codec) are treated as misses.
+            logger.warning(
+                "Unable to decode metastore cache entry %s with %s; "
+                "treating as a cache miss",
+                key,
+                type(self.codec).__name__,
+            )
+            return None
 
     def has(self, key: str) -> bool:
         entry = self.get(key)

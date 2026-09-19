@@ -66,6 +66,9 @@ def main(argv: list[str] | None = None) -> int:
     )
     p.add_argument("--days", type=int, default=int(os.environ.get("STALE_DAYS", "3")))
     p.add_argument("--delete", action="store_true")
+    p.add_argument(
+        "--force", action="store_true", help="actually delete branches (safety check)"
+    )
 
     args = parser.parse_args(argv)
     logging.basicConfig(
@@ -78,7 +81,8 @@ def main(argv: list[str] | None = None) -> int:
     today = datetime.now(timezone.utc).date().isoformat()
 
     if args.cmd == "dispatch":
-        _require("GH_TOKEN", *([] if args.dry_run else ["DEVIN_API_KEY"]))
+        # Dry runs still list Devin sessions to compute "attempt exists".
+        _require("GH_TOKEN", "DEVIN_API_KEY")
         with open(args.prompt_file, encoding="utf-8") as fh:
             prompt = fh.read()
         outcomes = ops.dispatch(
@@ -97,7 +101,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.cmd == "watch-session":
         _require("GH_TOKEN", "DEVIN_API_KEY")
-        ok, detail = False, "watch aborted"
+        ok, detail, confirmed = False, "watch aborted", False
         try:
             ok, detail = ops.watch_session(
                 devin,
@@ -105,22 +109,42 @@ def main(argv: list[str] | None = None) -> int:
                 timeout=timedelta(minutes=args.timeout_minutes),
                 poll=args.poll_seconds,
             )
+            confirmed = True
         finally:
             verdict = "✅ PR opened" if ok else "❌ Failed"
             line = f"[Issue #{args.issue}] {verdict} - {detail}"
             logging.getLogger("automation").log(
                 logging.INFO if ok else logging.ERROR, line
             )
-            ops.ensure_comment(gh, DASHBOARD_ISSUE, f"session:{args.session_id}", line)
-            if not ok and not args.keep_branch:
-                ops.cleanup_branch(gh, args.issue)
+            try:
+                ops.ensure_comment(
+                    gh, DASHBOARD_ISSUE, f"session:{args.session_id}", line
+                )
+            except Exception:
+                if confirmed:
+                    raise
+                # Reporting is best-effort; keep the original watch exception.
+                logging.getLogger("automation").exception("dashboard update failed")
+            finally:
+                # Only a confirmed failure (dead/finished-without-PR/timeout)
+                # justifies deleting the branch; an aborted watch may leave a
+                # session that is still pushing to it.
+                if confirmed and not ok and not args.keep_branch:
+                    ops.cleanup_branch(gh, args.issue, force=True)
         return 0 if ok else 1
 
     _require("GH_TOKEN")
     for name, reason in ops.stale_branches(
-        gh, timedelta(days=args.days), delete=args.delete
+        gh, timedelta(days=args.days), delete=args.delete, force=args.force
     ):
-        print(f"{name}\t{reason}\t{'deleted' if args.delete else 'stale'}")
+        action = (
+            "deleted"
+            if args.delete and args.force
+            else "would delete"
+            if args.delete
+            else "stale"
+        )
+        print(f"{name}\t{reason}\t{action}")
     return 0
 
 

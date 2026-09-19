@@ -65,14 +65,19 @@ def marker(key: str) -> str:
 def attempted_issues(
     prs: Iterable[dict[str, Any] | PullRequest],
     sessions: Iterable[dict[str, Any] | Session],
+    branches: Iterable[str] = (),
 ) -> set[int]:
     """Issue numbers that already have a PR, a fix branch, or a session that owns them.
 
     A session owns its issue while it is still running or once it has opened
     a PR (see :meth:`Session.owns_issue`); failed attempts are ignored so the
-    issue is dispatched again on the next sweep.
+    issue is dispatched again on the next sweep. ``branches`` covers fix
+    branches that have no PR yet (a session still pushing to one).
     """
     seen: set[int] = set()
+    for name in branches:
+        if m := BRANCH_ISSUE.match(name):
+            seen.add(int(m.group(1)))
     for pr in prs:
         if isinstance(pr, PullRequest):
             body, ref = pr.body, pr.head.get("ref", "")
@@ -416,7 +421,8 @@ def dispatch(
     owner = uuid.uuid4().hex
     issues = sorted(gh.open_issues(label), key=lambda i: -int(i["number"]))
     prs = gh.pulls("all")
-    done = attempted_issues(prs, devin.list_sessions(tag))
+    branches = (str(b["name"]) for b in gh.paginate("branches"))
+    done = attempted_issues(prs, devin.list_sessions(tag), branches)
     outcomes: list[Outcome] = []
     dispatched = 0
     for issue in issues:
@@ -476,9 +482,9 @@ def dispatch(
                     continue
                 finally:
                     release_issue(gh, n, token)
+                dispatched += 1
                 url = session_url(s)
                 ensure_comment(gh, n, f"dispatch:{n}", f"Fix session dispatched: {url}")
-                dispatched += 1
                 outcomes.append(Outcome(n, "dispatched", url))
         except ApiError as exc:  # keep going with the next issue
             log.error("[Issue #%d] dispatch failed: %s", n, exc)

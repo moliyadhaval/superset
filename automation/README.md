@@ -37,11 +37,12 @@ flowchart LR
     issues["GitHub issues<br/>nightly-scan + category"]:::out
     dispatch["3. Fix dispatcher<br/>03:20 UTC"]:::job
     pr["One Devin session + PR<br/>per open issue"]:::out
+    devreview["Devin Review<br/>+ auto-fix of comments"]:::job
     review["Human review & merge"]:::human
     dash["4. Observability dashboard<br/>07:12 UTC"]:::job
     comment["Metrics comment<br/>on issue #18"]:::out
 
-    scan --> issues --> dispatch --> pr --> review
+    scan --> issues --> dispatch --> pr --> devreview --> review
     dash --> comment
 ```
 
@@ -50,6 +51,7 @@ flowchart LR
 | 1. Nightly scan | 02:37 | issues labelled `nightly-scan` + category | read-only, never touches files |
 | 2. Auto-fix trigger | on `github:issues` | — | never fires for App-authored issues, see [§3](#3-fix-dispatcher-why-it-exists) |
 | 3. Fix dispatcher | 03:20 | one Devin session → one PR per open issue | self-heals: unfixed issues are retried next night |
+| Devin Review | on each fix PR | review comments on the PR, auto-fixed by the fix session before hand-off | human review and merge come last |
 | 4. Observability dashboard | 07:12 | one metrics comment on issue [#18](https://github.com/moliyadhaval/superset/issues/18) | never edits repo files |
 
 All sessions are tagged `nightly-scan` + `superset` so they can be found in the

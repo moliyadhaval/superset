@@ -29,29 +29,20 @@ on a `devin/…` branch that a human reviews and merges.
 
 ```mermaid
 flowchart LR
-    classDef sched fill:#1f6feb,stroke:#1f6feb,color:#fff
-    classDef artefact fill:#f6f8fa,stroke:#d0d7de,color:#24292f
-    classDef dead fill:#fff8c5,stroke:#d4a72c,color:#24292f,stroke-dasharray:5 5
+    classDef job fill:#1f6feb,stroke:#1f6feb,color:#fff
+    classDef out fill:#f6f8fa,stroke:#d0d7de,color:#24292f
     classDef human fill:#dafbe1,stroke:#2da44e,color:#24292f
 
-    scan["<b>1. Nightly scan</b><br/>02:37 UTC"]:::sched
-    issues["GitHub issues<br/>label nightly-scan + category"]:::artefact
-    autofix["<b>2. Auto-fix trigger</b><br/>github:issues event"]:::dead
-    dispatch["<b>3. Fix dispatcher</b><br/>03:20 UTC"]:::sched
-    sessions["One Devin session<br/>per open issue"]:::artefact
-    pr["Pull request<br/>devin/nightly-fix-‹N›-‹slug›<br/>body: Fixes #‹N›"]:::artefact
-    review["Human review<br/>& merge"]:::human
-    dash["<b>4. Observability dashboard</b><br/>07:12 UTC"]:::sched
-    comment["Metrics comment<br/>on tracking issue #18"]:::artefact
+    scan["1. Nightly scan<br/>02:37 UTC"]:::job
+    issues["GitHub issues<br/>nightly-scan + category"]:::out
+    dispatch["3. Fix dispatcher<br/>03:20 UTC"]:::job
+    pr["One Devin session + PR<br/>per open issue"]:::out
+    review["Human review & merge"]:::human
+    dash["4. Observability dashboard<br/>07:12 UTC"]:::job
+    comment["Metrics comment<br/>on issue #18"]:::out
 
-    scan --> issues
-    issues -.->|"never fires (App-authored)"| autofix
-    autofix -.-> sessions
-    issues -->|"polls open issues"| dispatch
-    dispatch --> sessions --> pr --> review
+    scan --> issues --> dispatch --> pr --> review
     dash --> comment
-    pr -.->|"cycle time, CI, reviews"| dash
-    issues -.->|"issues / day"| dash
 ```
 
 | Step | When (UTC) | Produces | Notes |

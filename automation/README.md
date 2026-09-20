@@ -27,18 +27,42 @@ on a `devin/…` branch that a human reviews and merges.
 
 ## The pipeline at a glance
 
-```
- 02:37 UTC   Nightly scan ─────────► GitHub issues, label `nightly-scan` + category
-                                          │
-                       (GitHub App event) │  Auto-fix trigger  ← does not fire, see below
-                                          ▼
- 03:20 UTC   Fix dispatcher ───► one Devin session per open issue ───► PR  `devin/nightly-fix-<issue>-<slug>`
-                                                                         body: `Fixes #<issue>`
- 07:12 UTC   Observability dashboard ───► metrics comment on tracking issue #18
+```mermaid
+flowchart LR
+    classDef sched fill:#1f6feb,stroke:#1f6feb,color:#fff
+    classDef artefact fill:#f6f8fa,stroke:#d0d7de,color:#24292f
+    classDef dead fill:#fff8c5,stroke:#d4a72c,color:#24292f,stroke-dasharray:5 5
+    classDef human fill:#dafbe1,stroke:#2da44e,color:#24292f
+
+    scan["<b>1. Nightly scan</b><br/>02:37 UTC"]:::sched
+    issues["GitHub issues<br/>label nightly-scan + category"]:::artefact
+    autofix["<b>2. Auto-fix trigger</b><br/>github:issues event"]:::dead
+    dispatch["<b>3. Fix dispatcher</b><br/>03:20 UTC"]:::sched
+    sessions["One Devin session<br/>per open issue"]:::artefact
+    pr["Pull request<br/>devin/nightly-fix-‹N›-‹slug›<br/>body: Fixes #‹N›"]:::artefact
+    review["Human review<br/>& merge"]:::human
+    dash["<b>4. Observability dashboard</b><br/>07:12 UTC"]:::sched
+    comment["Metrics comment<br/>on tracking issue #18"]:::artefact
+
+    scan --> issues
+    issues -.->|"never fires (App-authored)"| autofix
+    autofix -.-> sessions
+    issues -->|"polls open issues"| dispatch
+    dispatch --> sessions --> pr --> review
+    dash --> comment
+    pr -.->|"cycle time, CI, reviews"| dash
+    issues -.->|"issues / day"| dash
 ```
 
-All times are UTC and all sessions are tagged `nightly-scan` + `superset` so
-they can be found in the Devin session list.
+| Step | When (UTC) | Produces | Notes |
+|------|-----------|----------|-------|
+| 1. Nightly scan | 02:37 | issues labelled `nightly-scan` + category | read-only, never touches files |
+| 2. Auto-fix trigger | on `github:issues` | — | never fires for App-authored issues, see [§3](#3-fix-dispatcher-why-it-exists) |
+| 3. Fix dispatcher | 03:20 | one Devin session → one PR per open issue | self-heals: unfixed issues are retried next night |
+| 4. Observability dashboard | 07:12 | one metrics comment on issue [#18](https://github.com/moliyadhaval/superset/issues/18) | never edits repo files |
+
+All sessions are tagged `nightly-scan` + `superset` so they can be found in the
+Devin session list.
 
 ## The four automations
 

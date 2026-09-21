@@ -18,3 +18,20 @@
 #
 -e .[development,bigquery,druid,duckdb,fastmcp,gevent,gsheets,mysql,postgres,presto,prophet,trino,thumbnails]
 -e ./superset-extensions-cli[test]
+
+# Security floors for transitive development/CI dependencies. These packages are
+# not declared in pyproject.toml, so the minimums carrying the advisory fixes are
+# pinned here.
+
+# Security: GHSA-jpw9-pfvf-9f58, GHSA-hvrp-rf83-w775, GHSA-vj7q-gjh5-988w (HIGH)
+# - missing principal check on HTTP session requests, cross-client task access,
+#   and no Host/Origin validation on the WebSocket transport
+mcp>=1.28.1
+# Security: GHSA-5rvq-cxj2-64vf (HIGH) - quadratic querystring parsing (CPU DoS),
+# parameter smuggling and unbounded buffering on a negative Content-Length
+python-multipart>=0.0.31
+# Security: GHSA-58pv-8j8x-9vj2 (HIGH) - path traversal
+jaraco-context>=6.1.0
+# Security: CVE-2025-8869, CVE-2026-8643 - symlink escape in the fallback tar
+# extraction and path traversal via console_scripts entry-point names
+pip>=26.1.2

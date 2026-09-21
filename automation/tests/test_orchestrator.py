@@ -210,6 +210,8 @@ def test_attempted_issues_matches_body_branch_and_session() -> None:
         {"title": "Fix a issue #4", "status": "error"},
     ]
     assert ops.attempted_issues(prs, sessions) == {1, 2, 3}
+    branches = ["devin/nightly-fix-5-bar", "master", "devin/claims/issue-6"]
+    assert ops.attempted_issues(prs, sessions, branches) == {1, 2, 3, 5}
 
 
 def test_watch_session_requires_pr(fake: tuple[Fake, str]) -> None:
@@ -864,11 +866,43 @@ def test_dispatch_claims_then_releases(fake: tuple[Fake, str], git: GitData) -> 
     )
     outcomes = ops.dispatch(gh_client(base), devin_client(base), fix_prompt="p")
     assert outcomes[0].status == "dispatched"
-    paths = [c[1] for c in state.calls]
-    assert paths.index("/repos/o/r/git/refs") < paths.index("/sessions", 3)
+    assert state.calls.index(("POST", "/repos/o/r/git/refs")) < state.calls.index(
+        ("POST", "/sessions")
+    )
     head = git.head(9)
     assert head is not None
     assert head["message"] == ops.RELEASE_MESSAGE
+
+
+def test_dispatch_skips_issue_with_pr_less_fix_branch(
+    fake: tuple[Fake, str], git: GitData
+) -> None:
+    state, base = fake
+    _dispatch_scripts(state)
+    state.script["/repos/o/r/branches"] = [(200, [{"name": "devin/nightly-fix-9-x"}])]
+    outcomes = ops.dispatch(gh_client(base), devin_client(base), fix_prompt="p")
+    assert [(o.status, o.detail) for o in outcomes] == [("skipped", "attempt exists")]
+    assert ("POST", "/sessions") not in state.calls
+
+
+def test_dispatch_cap_counts_sessions_even_if_comment_fails(
+    fake: tuple[Fake, str], git: GitData
+) -> None:
+    """A created session counts toward the cap before its issue comment is posted."""
+    state, base = fake
+    issues = [
+        {"number": n, "title": "t", "html_url": "u", "labels": []} for n in (9, 8)
+    ]
+    state.script["/repos/o/r/issues"] = [(200, issues)]
+    state.script["/repos/o/r/pulls"] = [(200, [])]
+    state.script["/sessions"] = [(200, {"items": [], "has_next_page": False})] * 2 + [
+        (201, {"session_id": "devin-1", "status": "running"})
+    ]
+    state.script["/repos/o/r/issues/9/comments"] = [(404, {})]  # comment fails
+    outcomes = ops.dispatch(gh_client(base), devin_client(base), fix_prompt="p", cap=1)
+    assert [(o.issue, o.status) for o in outcomes] == [(9, "failed"), (8, "skipped")]
+    assert outcomes[1].detail == "cap reached, next sweep"
+    assert state.calls.count(("POST", "/sessions")) == 1
 
 
 def test_dispatch_release_failure_keeps_dispatched_outcome(
